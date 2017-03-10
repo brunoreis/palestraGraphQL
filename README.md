@@ -233,7 +233,7 @@ thread(id:2){
 }
 ```
 
-
+```
 fragment messageFields on Message {
   id
   text
