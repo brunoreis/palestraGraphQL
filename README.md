@@ -110,20 +110,24 @@ PRIMEIRO EXEMPLO
 GraphQL is about asking for specific fields on objects
 
 Exemplo:
+
+```
 {
   hero {
     name
   }
 }
---- result --- 
+```
+
+result
+
 {
   "data": {
     "hero": {
       "name": "R2-D2"
     }
   }
-}
-
+}```
 - query has exactly the same shape as the result
 
 CAMPOS QUE SÃO OBJETOS
