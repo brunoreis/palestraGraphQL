@@ -1,10 +1,13 @@
-OBJETIVOS DA PROSA
-==================
+TÓPICOS DA PROSA
+================
 
 - Introdução sobre GraphQL
-- Noções básicas das consultas e mutations
-- Noções básicas do schema
-
+- Consultas e mutations
+- Schema
+- Noções de React & Redux
+- Funcionamento do Apollo Client
+- Processo de Trabalho e implementação em PHP
+- Dúvidas
 
 DISCLAIMER
 ==========
@@ -688,10 +691,10 @@ PROCESSO DE TRABALHO - EXCELENTE
 BOA IMPLEMENTAÇÃO EM PHP
 ========================
 
-youshido
- - compatível com RFC do GraphQL
+https://github.com/Youshido/GraphQL
 
- - Declaração do GraphQL Schema toda em PHP
+ - compatível com RFC do GraphQL
+ - Declaração do schema toda em PHP
  - Permite declaração de tipos de forma robusta
  - Validação dos requests
  - Bem documentado
