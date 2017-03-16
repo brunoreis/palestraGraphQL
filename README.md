@@ -58,20 +58,20 @@ GraphQL:
 
 - Não é restrita a nenhum DB e pode ser usada como uma camada sobre código já existente. 
 
-Uma requisição recebida: 
-  - 1 recebe uma verificação de tipagem
-  	- * já é uma bela validação
-  - 2 roda as funções definidas para retornar o resultado
+O que acontece com uma requisição recebida: 
+  - recebe uma verificação de tipagem
+  	- que por si só já é uma bela validação
+  - roda as funções definidas para retornar o resultado
   	- ótima organização e reuso de requests, principalmente leitura
 
-As requisições de graphql podem ser 
-	- Queries
-		- Recuperam dados a partir de uma query raiz, navegando pelos relacionamentos do grafo. 
+As requisições de graphql podem ser: 
+ - Queries
+   - Recuperam dados a partir de uma query raiz, navegando pelos relacionamentos do grafo. 
 
-	- Mutations
-		- Executam uma operação e definem um objeto raiz, que pode ser "navegado", tal qual uma query normal
+ - Mutations
+   - Executam uma operação e definem um objeto raiz, que pode ser "navegado", tal qual uma query normal
 
-	- A diferença principal entre queries e mutations é a convenção de que apenas as mutations podem alterar dados do sistema. 
+ - A diferença principal entre queries e mutations é a convenção de que apenas as mutations podem alterar dados do sistema. 
 
 http://graphql.org/learn/
 
