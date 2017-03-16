@@ -2,7 +2,8 @@ OBJETIVOS DA PROSA
 ==================
 
 - Introdução sobre GraphQL
-- Noções Básicas
+- Noções básicas das consultas e mutations
+- Noções básicas do schema
 
 
 DISCLAIMER
@@ -12,7 +13,7 @@ Não pretendo fazer um duelo do rest com o graphql, pelo contrário, apresentare
 
 Ambos são válidos, porém, para os tipos de aplicações que eu desenvolvo, GraphQL se apresentou como alternativa superior.
 
-Vamos focar em GraphQL para entender o máximo possível neste pouco tempo. Dúvidas sobre GraphQL são muito bem vindas. Comparações com REST, talvez seja melhor conversarmos depois dado o tempo da palestra. 
+Vamos focar em GraphQL para entender o máximo possível neste pouco tempo. Dúvidas sobre GraphQL são muito bem vindas. 
 
 
 HISTÓRICO
@@ -27,17 +28,19 @@ GraphQL se originou no Facebook em 2012. Foi usado em larga escala por anos até
 PEQUENA HISTÓRIA - GRAPHQL E REST
 =================================
 
-Tradicionalmente se usava páginas monolíticas. Toda página era renderizada e mandada para o cliente/navegador.
+Tradicionalmente a web usava páginas monolíticas. A página toda era renderizada e mandada para o cliente/navegador.
 
-Ao longo do tempo surgiram aplicações em javascript. Então o servidor manda a aplicação ao cliente, que por sua vez, consome dados. 
+Ao longo do tempo surgiram aplicações em javascript. Então o servidor manda a aplicação ao cliente, que dai em diante, faz requisições apenas para consumir dados. 
 
-REST estabelece algumas restrições para garantir o bom uso do HTTp, mas não é um padrão bem definido. Por conta disso, há geralmente um grande acoplamento entre clientes e serviços específicos. 
+REST estabelece algumas restrições para garantir o bom uso do HTTP, mas não é um padrão bem definido. E nem tipado. Por conta disso, há geralmente um grande acoplamento entre clientes e serviços específicos. 
 
-GraphQL é protocolo aberto, mais claramente definido. É um protocolo de comunicação de alto nível, não específico para "Graph DBs" como pode parecer. É robusto e usado em bilhões de requests diários no FB.
+GraphQL é um protocolo mais claramente definido. 
 
-Destacam-se também o SOAP, e o Falcor, mas as escolhas principais hoje no mercado são entre GraphQL e REST. 
+Como GraphQL impõe convenções e uma definição bem mais clara do que é trafegado, isso torna os sistemas que o usam mais interoperáveis. 
 
-Como GraphQL impõe certas convenções, isso torna os sistemas que o usam mais interoperáveis. Além disso, essas convenções e funcionalidades agregada, facilita muito a vida do desenvolvedor, que já encontra diversas fundações prontas para desenvolver. 
+Além disso, essas convenções e funcionalidades agregadas, como por exemplo a verificação de tipagem, facilita muito a vida do desenvolvedor, que já encontra diversas fundações prontas para trabalhar. 
+
+E isso também permite o surgimento de um ecossistema mais rico de ferramentas de desenvolvimento como o GraphiQL
 
 O QUE É GRAPHQL
 ==================
@@ -99,21 +102,19 @@ Como uma query pode se expandir, adicionando campos e critérios/argumentos, e o
 
 Boa de Usar
 -----------
-Assim que for definido o schema, que é requisito para o servidor funcionar, já temos disponível uma documentação da API. Esta pode ser usada e explorada usando belas ferramentas que já fornecem dicas(hints), graças à característica do GraphQL de permitir introspecção. 
+Assim que for definido o schema, que é requisito para o servidor funcionar, já temos disponível uma documentação da API. Esta pode ser usada e explorada usando belas ferramentas que já fornecem dicas, graças à característica do GraphQL de permitir introspecção. 
 
 Além disso, temos a facilidade de customizar as queries no cliente, que dá uma liberdade muito maior para o desenvolvedor do front, que pode adicionar e remover campos e relacionamentos das queries de acordo com as demandas que surgirem na evolução do software. 
 
+MOSTRAR O GRAPHIQL
+==================
 
-VANTAGENS
-=========
-- verificação de tipo já fica na definição da API
-- reutilizável para diversas versões e dispositivos
-	- relatos de quem já usa há tempos
-	- quando a arquitetura / modelagem básica está completa, mudanças nos clientes não exigem modificações no backend
-- nova forma de distinguir responsabilidades do front e backends
-	- É o frontend quem diz, por exemplo, os campos que quer
-- documentação facil de gerar 
-- introspecção e facilidade em explorar API criada
+https://github.com/graphql/graphiql
+
+Está incluso em diversas outras ferramentas. 
+
+Explorar API e mostrar frontend do sistema. 
+
 
 PRIMEIRO EXEMPLO
 ==================
@@ -125,8 +126,8 @@ Exemplo:
 
 ```
 {
-  hero {
-    name
+  messagesStatus{
+    messagesCount
   }
 }
 ```
@@ -136,8 +137,8 @@ result
 ```
 {
   "data": {
-    "hero": {
-      "name": "R2-D2"
+    "messagesStatus": {
+      "messagesCount": 602
     }
   }
 }
@@ -153,36 +154,61 @@ CAMPOS QUE SÃO OBJETOS
 Navegando no grafo
 
 ```
-thread{
-	id
-	messages{
-		id
-		text
-		sentAt
-	}
+{
+  thread(id:141){
+    id
+    messages{
+      id
+      text
+    }
+  }
 }
 ```
 
 ```
-{thread:{
-	34
-	messages:[
-		{
-			id:1,
-			text:"Olá",
-			sentAt:'2005-12-22'
-		},
-		{
-			id:2,
-			text:"Tudo bem?",
-			sentAt:'2005-12-22'
-		},
-	]
-}}
+{
+  "data": {
+    "thread": {
+      "id": "141",
+      "messages": [
+        {
+          "id": "535",
+          "text": "Galera esse mês o PHPFC vai ser irado!!!..."
+        },
+        {
+          "id": "534",
+          "text": "Gostei dos assuntos!"
+        }
+      ]
+    }
+  }
+}
 ```
 
 Como é feita a distinção entre um item e uma lista? 
 Pelo tipo de retorno declarado no schema. 
+
+```
+{
+  threads{
+    id
+  }
+}
+```
+
+resultado
+
+```
+{
+  "data": {
+    "threads": [
+      {
+        "id": "141"
+      },...
+    ]
+  }
+}
+```
 
 Soluções em rest: 
 	1 - criar um endpoint específico que manda as mensagens aninhadas
@@ -197,40 +223,47 @@ ARGUMENTOS
 especifique cada campo
 
 ```
-thread(id:2){
-	id
-	messages(first:20){
-		id
-		text(truncate:30)
-		sentAt(locale:["pt","BR"])
-	}
+{
+  thread(id:141){
+    id
+    messages{
+      id
+      text
+    }
+  }
 }
 ```
 
-Cada campo pode receber seus argumentos. No rest os argumentos são específicos de um request. Essa abordagem do GraphQL repõe completamente múltiplos requests. 
+Cada campo pode receber seus argumentos. No rest os argumentos são específicos de um request. Essa abordagem do GraphQL contribui muito para que não sejam necessários múltiplos requests para buscar objetos diferentes. 
 
 ALIASES
 =======
+Você pode renomear um campo, para usá-lo mais de uma vez em uma mesma query. Isso geralmente será feito passando argumentos diferentes:
+
 
 ```
-thread(id:2){
-	id,
-
-	firstMessages: messages(first:5){
-		id
-		text
-		sentAt
-	},
-
-	lastMessages: messages(last:5){
-		id
-		text
-		sentAt
-	}
+{
+  totalCount:messagesStatus(){
+    messagesCount
+  }
+  phpdfCount:messagesStatus(peer_id:2){
+    messagesCount
+  }
 }
 ```
 
-Você pode renomear um campo, para usá-lo mais de uma vez em uma mesma query. 
+```
+{
+  "data": {
+    "totalCount": {
+      "messagesCount": 602
+    },
+    "phpdfCount": {
+      "messagesCount": 503
+    }
+  }
+}
+```
 
 FRAGMENTOS
 ==========
@@ -261,18 +294,30 @@ PASSANDO VARIÁVEIS
 ==================
 
 ```
-query oneThread($id: ID) {
-	thread(id:$id) {
-		...
-	}
+query thread($id:ID){
+  thread(id:$id){
+    id
+    messages{
+      ...MessageFields
+    }
+  }
+}
+
+fragment MessageFields on Message{
+    id
+    text
+    sentAt 
 }
 ```
+
 Variables:
 ```
 {
   "id": 2
 }
 ```
+
+Repare na definição da query. É a forma extensa, onde a query tem um nome.
 
 A primeira linha tem a definição. Onde $id é o nome e "ID" é o tipo. Depois disso a query repõe id na segunda linha pelo valor passado. 
 
@@ -281,6 +326,7 @@ As queries nunca devem ser montadas concatenando strings, sempre com a passagem 
 Tipos complexos podem ser passados, de acordo com os tipos especificados no servidor.
 
 OBS: variáveis exigem uma sintaxe que tem um nome da operação (oneThread nesse caso). Nomes de operação também são recomendados para sistemas em produção. Para debug e outras funcionalidades. 
+
 
 DIRETIVAS
 =========
@@ -309,9 +355,34 @@ Variáveis:
 }
 ```
 
+FRAMENTOS INLINE
+================
+
+Inline Fragments - especificando campos diferentes dependento do tipo, para uma query em um "union" ou "interface"
+
+Quando não sabemos o tipo do retorno
+```
+query Information($subtopicId: ID!) {
+	information(subtopicId: $subtopicId) {
+	    id
+	    topic{
+		    ... on Message {
+		        id
+		        text
+		    }
+		    ... on Thread {
+			    id
+			    messages
+		    }
+		}
+	}
+}
+```
+
 MUTATIONS
 =========
-Mutations são queries. 
+Mutations são como consultas normais. 
+
 Específicas, dentro de um "namespace raiz" específico. 
 E, por convenção, são as únicas que devem alterar dados no servidor. 
 
@@ -321,16 +392,238 @@ Podem passar diversos campos, fazendo assim com que um mesmo request execute mai
 
 Ao passar mais de um campo, nas queries eles são executados em paralelo. Nas mutations, executam de forma serial.
 
+```
+mutation informationRegisterForThread(
+	$threadId: ID, 
+	$information: InformationInput
+) {
+  	informationRegisterForThread(
+  		threadId: $threadId, 
+  		information: $information
+  	) {
+    ...ThreadFields
+  }
+}
+```
+```
+fragment ThreadFields on Thread {
+  id
+  informations {
+    id
+    subtopic {
+      id
+      path
+    }
+  }
+  messages {
+    id
+    text
+    irrelevant
+    sentAt
+    thread {
+      id
+    }
+    sender {
+      id
+      name
+      email
+      photo {
+        id
+        filename
+        type {
+          name
+        }
+        size
+        mimetype
+        url
+      }
+    }
+    media {
+      id
+      filename
+      type {
+        name
+      }
+      size
+      mimetype
+      url
+    }
+  }
+}
+```
+variables
+```
+{
+  "threadId":  "141", 
+  "information": {"subtopicId" : "14"}
+}
+```
 
 INPUT TYPES
 ===========
 
-
-TÓPICOS AVANÇADOS
-=================
-Inline Fragments - especificando campos diferentes dependento do tipo, para uma query em um "union" ou "interface"
+Veja o InformationInput do exemplo anterior. 
+É um tipo complexo de entrada. A diferença para os tipos normais (no schema) é que ele não pode declarar um resolver para si. 
 
 
+SCHEMA E TIPOS
+==============
+(http://graphql.org/learn/schema/)
+
+Só pela query já podemos ter uma ideia do formato do retorno. 
+
+Definem como as consultas e mutations podem ser executadas. Define quais dados podem ser consultados. 
+
+Todas consultas começam da raiz, com a escolha de um campo por lá. Então escolhemos campos dentro daquele campo selecionado. 
+
+O Schema diz: 
+
+	- quais campos estão disponíveis
+	- que tipos de objetos eles retornam
+	- que campos estão disponíveis nestes sub-campos
+	- que argumentos podem ser passados para filtrar cada um destes campos
+
+Assim, quando uma query chega, ela é validada e executada usando o schema. 
+
+
+Os schemas podem ser definidos em qualquer linguagem. 
+
+- Tipos e campos
+- Argumentos
+- Tipos básicos na raiz: Query e Mutation
+- Tipos escalares: 
+	- Int
+	- Float
+	- String
+	- Boolean
+	- ID
+	- outros tipos escalares podem ser definidos
+- Enums
+- Listas
+- NonNulls
+- Interfaces
+- Unions
+- InputTypes
+
+```php
+class Schema extends AbstractSchema
+{
+    /**
+     * @param SchemaConfig $config
+     */
+    public function build(SchemaConfig $config)
+    {
+        $config->getQuery()->addFields([
+            new MessagesField(),
+            new ThreadsField(),
+            new ThreadField(),
+            new PeersField(),
+           	...
+        ...
+    ...
+}
+```
+
+```php
+namespace AppBundle\GraphQL\MessagesAndThreads\Queries;
+
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Youshido\GraphQLBundle\Field\AbstractContainerAwareField;
+use Youshido\GraphQL\Type\ListType\ListType;
+use Youshido\GraphQL\Execution\ResolveInfo;
+use Youshido\GraphQL\Config\Field\FieldConfig;
+use AppBundle\GraphQL\Type\PeerType;
+
+class PeersField extends AbstractContainerAwareField
+{
+    public function getType()
+    {
+        return new ListType(new PeerType());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($value, array $args, ResolveInfo $info)
+    {
+        return $this->container
+            ->get('app.resolver.peers')
+            ->search(new ParameterBag($args));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDescription()
+    {
+        return 'Retorna uma lista de peers.';
+    }
+}
+```
+
+```php
+namespace AppBundle\GraphQL\Type;
+
+use Youshido\GraphQL\Type\Object\AbstractObjectType;
+use Youshido\GraphQL\Type\NonNullType;
+use Youshido\GraphQL\Type\Scalar\IdType;
+use Youshido\GraphQL\Type\Scalar\StringType;
+
+class PeerType extends AbstractObjectType
+{
+    public function build($config)
+    {
+        $config->addFields([
+            'id' => new NonNullType(new IdType()),
+            'printName' => [
+                'type' => new StringType(),
+                'description' => 'Nome do grupo/outro participante da conversa'
+            ],
+            'peerType' => [
+                'type' => new StringType(),
+                'description' => 'Tipo do peer, indica se era um grupo (channel) ou outro tipo de conversa'
+            ],
+            'peerId' => [
+                'type' => new StringType(),
+                'description' => 'O id original'
+            ]
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDescription()
+    {
+        return 'Um peer representa um canal de comunicação. No telegram, pode ser uma outra pessoa ou um grupo. ';
+    }
+}
+```
+
+GraphQL schema language:
+
+```
+peers: [Peer]
+
+type Peer {
+	id: ID!
+	printName: String
+	peerType: String
+	peerId: String
+}
+```
+
+
+
+REVISÃO SOBRE O GRAPHQL - VANTAGENS
+=========
+- verificação de tipo já fica na definição da API
+- O schema é fácil de expandir sem mudar e isso o torna reutilizável para diversas versões e dispositivos
+	- relatos de quem já usa há tempos: quando a arquitetura / modelagem básica está completa, mudanças nos clientes não exigem modificações no backend
+- nova forma de distinguir responsabilidades do front e backends
+	- É o frontend quem diz, por exemplo, os campos que quer
+- documentação facil de gerar 
+- introspecção e facilidade em explorar API criada
 
 =============
 APOLLO CLIENT
