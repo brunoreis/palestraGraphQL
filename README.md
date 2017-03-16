@@ -1,8 +1,8 @@
-MINHA HISTÓRIA
-==============
+OBJETIVOS DA PROSA
+==================
 
-
-
+- Introdução sobre GraphQL
+- Noções Básicas
 
 
 DISCLAIMER
@@ -24,30 +24,8 @@ Definido no ano 2000 by Roy Fielding, um dos autores do HTTP, em uma tese de dou
 GraphQL se originou no Facebook em 2012. Foi usado em larga escala por anos até ter seus padrões publicados em 2015.
 
 
-O QUE É GRAPHQL
-==================
-
-GraphQL is 
-- Uma linguagem de consulta para sua api 
-- and a server-side runtime for executing queries by using a type system you define for your data. 
-
-** GraphQL isn't tied to any specific database or storage engine and is instead backed by your existing code and data. **
-
-A GraphQL service is 
-- created by defining types and fields on those types, 
-- then providing functions for each field on each type. 
-
-A received query is 
-  - first checked to ensure it only refers to the types and fields defined
-  - then runs the provided functions to produce a result.
-
-TEMOS A DEFINIÇÃO DE TIPOS E CAMPOS 
-	- JÁ É UMA BELA VALIDAÇÃO
-TEMOS A DEFINIÇÃO DE FUNÇÕES PARA CADA CAMPO 
-	- ORGANIZA OS REQUESTS / TEM A "FUNÇÃO" DOS CONTROLLERS
-
-GRAPHQL E REST
-==============
+PEQUENA HISTÓRIA - GRAPHQL E REST
+=================================
 
 Tradicionalmente se usava páginas monolíticas. Toda página era renderizada e mandada para o cliente/navegador.
 
@@ -60,6 +38,34 @@ GraphQL é protocolo aberto, mais claramente definido. É um protocolo de comuni
 Destacam-se também o SOAP, e o Falcor, mas as escolhas principais hoje no mercado são entre GraphQL e REST. 
 
 Como GraphQL impõe certas convenções, isso torna os sistemas que o usam mais interoperáveis. Além disso, essas convenções e funcionalidades agregada, facilita muito a vida do desenvolvedor, que já encontra diversas fundações prontas para desenvolver. 
+
+O QUE É GRAPHQL
+==================
+
+GraphQL: 
+
+- É uma linguagem de 
+    - consulta para sua api 
+    - execução de requisições tipadas em uma camada de runtime no servidor 
+    	- define tipos e campos
+    	- cria resolvers
+
+- Não é restrita a nenhum DB e pode ser usada como uma camada sobre código já existente. 
+
+Uma requisição recebida: 
+  - 1 recebe uma verificação de tipagem
+  	- * já é uma bela validação
+  - 2 roda as funções definidas para retornar o resultado
+  	- ótima organização e reuso de requests, principalmente leitura
+
+As requisições de graphql podem ser 
+	- Queries
+		- Recuperam dados a partir de uma query raiz, navegando pelos relacionamentos do grafo. 
+
+	- Mutations
+		- Executam uma operação e definem um objeto raiz, que pode ser "navegado", tal qual uma query normal
+
+	- A diferença principal entre queries e mutations é a convenção de que apenas as mutations podem alterar dados do sistema. 
 
 
 O QUE É UMA BOA API
@@ -83,7 +89,9 @@ PORQUE GRAPHQL É UMA BOA API
 
 Rápida 
 ------
-Navega pela estrutura de relacionamento entre os dados, trazendo tudo o que for preciso. Se for o caso, busca mais de uma estrutura de dados em uma mesma query. Defino quais campos quer de cada objeto, de modo que campos desnecessários não são trafegados. 
+Navega pela estrutura de relacionamento entre os dados, trazendo tudo o que for preciso. Se for o caso, busca mais de uma estrutura de dados em uma mesma query, poupando consultas 1-n. 
+
+A consulta no cliente já diz quais campos quer de cada objeto, de modo que campos desnecessários não são trafegados. 
 
 Imutável (ou minimamente mutável) 
 ---------------------------------
@@ -98,24 +106,29 @@ Além disso, temos a facilidade de customizar as queries no cliente, que dá uma
 
 VANTAGENS
 =========
-- self-checks embedded on the ground level of your backend architecture
-- reusable API for different client versions and devices, i.e. no more need in maintaining "/v1" and "/v2"
-- a complete new level of distinguishing of the backend and frontend logic
-- easily generated documentation and incredibly intuitive way to explore created API
-- once your architecture is complete – most client-based changes does not require backend modifications
+- verificação de tipo já fica na definição da API
+- reutilizável para diversas versões e dispositivos
+	- relatos de quem já usa há tempos
+	- quando a arquitetura / modelagem básica está completa, mudanças nos clientes não exigem modificações no backend
+- nova forma de distinguir responsabilidades do front e backends
+	- É o frontend quem diz, por exemplo, os campos que quer
+- documentação facil de gerar 
+- introspecção e facilidade em explorar API criada
 
 PRIMEIRO EXEMPLO
 ==================
 
-GraphQL is about asking for specific fields on objects
+Buscando campos específicos em objetos: 
 
-Exemplo:
+
 {
   hero {
     name
   }
 }
+
 --- result --- 
+
 {
   "data": {
     "hero": {
@@ -281,6 +294,10 @@ Podem passar diversos campos, fazendo assim com que um mesmo request execute mai
 Ao passar mais de um campo, nas queries eles são executados em paralelo. Nas mutations, executam de forma serial.
 
 
+INPUT TYPES
+===========
+
+
 TÓPICOS AVANÇADOS
 =================
 Inline Fragments - especificando campos diferentes dependento do tipo, para uma query em um "union" ou "interface"
@@ -299,6 +316,32 @@ Apollo is
 Mostrar ao menos como funciona:
 http://dev.apollodata.com/core/how-it-works.html
 https://dev-blog.apollodata.com/the-concepts-of-graphql-bc68bd819be3#.jpqm96sp2
+
+REACT
+=====
+Diagrama de funcionamento mostrando injeção das props por composição funcional. 
+Falar rapidamente do redux. 
+
+PROCESSO DE TRABALHO - EXCELENTE
+================================
+
+- Extraio componente Gráfico
+- Escrevo o teste no servidor
+- Faço passar (crio a mutation ou query)
+- Envolvo o componente com a mutation ou query
+- Rodo
+- Testo/ajusto a atualização do cache
+
+- Exemplo: InformationLabelContainer
+	- botão de remover label
+	- teste de remoção
+	- implementação da remoção
+	- API (explorer)
+	- Label isolado no InformationLabel.js
+	- Isolar o container puro, sem wrapper
+	- colocar o wrapper withGQL
+	- colocar o wrapper mutationRunner
+	- chamar o mutationRunner
 
 OUTROS
 ======
