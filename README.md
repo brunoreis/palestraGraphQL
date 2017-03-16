@@ -611,10 +611,19 @@ REVISÃO SOBRE O GRAPHQL - VANTAGENS
 - documentação facil de gerar 
 - introspecção e facilidade em explorar API criada
 
-REACT
-=====
-Diagrama de funcionamento mostrando injeção das props por composição funcional. 
-Falar rapidamente do redux. 
+REACT & REDUX
+=============
+Vamos rever o fluxo das informações no react/redux. 
+
+https://css-tricks.com/learning-react-redux/
+
+![React and Redux Diagram](https://cdn.css-tricks.com/wp-content/uploads/2016/03/redux-article-3-03.svg)
+
+![Container Compoonent Diagram](http://andrewhfarmer.com/react-ajax-best-practices/img/container-components.png)
+- Como o react renderiza
+- Como as props são passadas
+- Como a store é atualizada
+- Explicar os containers - mostrar no console
 
 APOLLO CLIENT
 =============
@@ -624,7 +633,7 @@ Apollo é:
  - gerencia o fluxo de dados entre o cliente e o servidor
  - uma API unificada para desenvolvimento de aplicações modernas sobre uma camada de GraphQL
 
-Mostrar ao menos como funciona:
+Como funciona:
 
 http://dev.apollodata.com/core/how-it-works.html
 
@@ -646,12 +655,13 @@ Excelente referência:  https://dev-blog.apollodata.com/the-concepts-of-graphql-
 PROCESSO DE TRABALHO - EXCELENTE
 ================================
 
-- Extraio componente Gráfico
-- Escrevo o teste no servidor
-- Faço passar (crio a mutation ou query)
-- Envolvo o componente com a mutation ou query
-- Rodo
-- Testo/ajusto a atualização do cache
+- Extraio componente gráfico C
+- Escrevo um teste no servidor S
+- Faço passar, criando a mutation ou query S
+- Neste ponto o serviço está pronto e pode ser usado S
+- Envolvo o componente com a mutation ou query C
+- Rodo C
+- Testo/ajusto a atualização do cache C/S
 
 - Exemplo: InformationLabelContainer
 	- botão de remover label - InformationLabel.js
@@ -688,3 +698,9 @@ DÚVIDAS
 ???
 
 Lembrando. Esta prosa está disponível em: https://github.com/brunoreis/palestraGraphQL
+
+TODO
+====
+
+- Explicação básica de react
+- Abrir o código do sistema
