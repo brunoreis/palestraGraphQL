@@ -619,6 +619,10 @@ https://css-tricks.com/learning-react-redux/
 
 ![React and Redux Diagram](https://cdn.css-tricks.com/wp-content/uploads/2016/03/redux-article-3-03.svg)
 
+- Como a tela é renderizada
+- Como as propriedades são passadas
+- O uso de state nos componentes
+
 http://andrewhfarmer.com/react-ajax-best-practices/
 
 ![Container Compoonent Diagram](http://andrewhfarmer.com/react-ajax-best-practices/img/container-components.png)
