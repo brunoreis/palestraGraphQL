@@ -525,15 +525,7 @@ class Schema extends AbstractSchema
 ```
 
 ```php
-namespace AppBundle\GraphQL\MessagesAndThreads\Queries;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Youshido\GraphQLBundle\Field\AbstractContainerAwareField;
-use Youshido\GraphQL\Type\ListType\ListType;
-use Youshido\GraphQL\Execution\ResolveInfo;
-use Youshido\GraphQL\Config\Field\FieldConfig;
-use AppBundle\GraphQL\Type\PeerType;
-
+...
 class PeersField extends AbstractContainerAwareField
 {
     public function getType()
@@ -562,13 +554,7 @@ class PeersField extends AbstractContainerAwareField
 ```
 
 ```php
-namespace AppBundle\GraphQL\Type;
-
-use Youshido\GraphQL\Type\Object\AbstractObjectType;
-use Youshido\GraphQL\Type\NonNullType;
-use Youshido\GraphQL\Type\Scalar\IdType;
-use Youshido\GraphQL\Type\Scalar\StringType;
-
+...
 class PeerType extends AbstractObjectType
 {
     public function build($config)
@@ -625,23 +611,37 @@ REVISÃO SOBRE O GRAPHQL - VANTAGENS
 - documentação facil de gerar 
 - introspecção e facilidade em explorar API criada
 
-=============
-APOLLO CLIENT
-=============
-
-Apollo is 
- - an incrementally-adoptable data stack 
- - that manages the flow of data between clients and backends. 
- - based on GraphQL, it gives you a principled, unified, and scalable API for developing modern apps on top of services.
-
-Mostrar ao menos como funciona:
-http://dev.apollodata.com/core/how-it-works.html
-https://dev-blog.apollodata.com/the-concepts-of-graphql-bc68bd819be3#.jpqm96sp2
-
 REACT
 =====
 Diagrama de funcionamento mostrando injeção das props por composição funcional. 
 Falar rapidamente do redux. 
+
+APOLLO CLIENT
+=============
+
+Apollo é: 
+ - um cliente GraphQL
+ - gerencia o fluxo de dados entre o cliente e o servidor
+ - uma API unificada para desenvolvimento de aplicações modernas sobre uma camada de GraphQL
+
+Mostrar ao menos como funciona:
+
+http://dev.apollodata.com/core/how-it-works.html
+
+Exemplo: 
+
+Ao adicionar mensagens a uma thread, com o método "threadAddMessages", no retorno já vem os dados da thread com as mensagens. Isso faz com que a mensagem na lista de mensagens à esquerda, seja mostrada na cor verde. 
+
+1 Ou seja, os dados da thread retornados são normalizando, atualizando as mensagens na store do cliente. 
+
+2 A query que lista as mensagens é atualizada. Ou ao menos suas mensagens o são. 
+
+3 A tela renderiza novamente mostrando a mensagem na cor verde. 
+
+* Tudo isso pelo simples retorno da mensagem na mutation *
+
+Excelente referência:  https://dev-blog.apollodata.com/the-concepts-of-graphql-bc68bd819be3#.jpqm96sp2
+
 
 PROCESSO DE TRABALHO - EXCELENTE
 ================================
@@ -654,45 +654,37 @@ PROCESSO DE TRABALHO - EXCELENTE
 - Testo/ajusto a atualização do cache
 
 - Exemplo: InformationLabelContainer
-	- botão de remover label
-	- teste de remoção
-	- implementação da remoção
+	- botão de remover label - InformationLabel.js
+	- teste de remoção - InformationDeleteTest
+	- implementação da remoção - Schema + InformationRemoveResolver
 	- API (explorer)
 	- Label isolado no InformationLabel.js
-	- Isolar o container puro, sem wrapper
-	- colocar o wrapper withGQL
-	- colocar o wrapper mutationRunner
+	- Container - informationRemove.graphql / InformationLabelContainer.js 
+		- Isolar o container puro, sem wrapper
+		- colocar o wrapper withGQL
+	- colocar o wrapper mutationRunner - mostrar sem o runner se der tempo e explicar composição com HOC
 	- chamar o mutationRunner
 
-OUTROS
-======
-https://www.reindex.io/docs/
 
-Exemplos legais de uso: 
-=======================
-
-A query que busca os status das mensagens pode ser chamada de um jeito, fazendo 4 queries, ou de outro, fazendo apenas uma. 
-
- - isso pode ser feito com a mesma query definida no servidor
-   - ela pode ser chamada de duas formas no cliente
- - ao se chamar um campo apenas, apenas um resolver é chamado
-   - instalar algum debug para monitorar as queries
- - o resultado é guardado no cache do apollo (pois tem tipo e id)
- - ao fazer a segunda query o resultado é atualizado onde for pertinente
-
- mostrar exemplo de outro resultado atualizado com refetchQueries
-
-====================
-IMPLEMENTAÇÃO EM PHP
-====================
+BOA IMPLEMENTAÇÃO EM PHP
+========================
 
 youshido
- - Full compatibility with the RFC Specification for GraphQL
- - Agile object oriented structure to architect your GraphQL Schema
- - Intuitive Type system that allows you to build your project much faster and stay consistent
- - Build-in validation for the GraphQL Schema you develop
- - Well documented classes with a lot of examples
- - Automatically created endpoint /graphql to handle requests
+ - compatível com RFC do GraphQL
 
+ - Declaração do GraphQL Schema toda em PHP
+ - Permite declaração de tipos de forma robusta
+ - Validação dos requests
+ - Bem documentado
+ - O bundle do symfony já cria um controller que funciona como um endpoint
 
+PLAYGROUND
+==========
+https://www.reindex.io/docs/
 
+DÚVIDAS
+=======
+
+???
+
+Lembrando. Esta prosa está disponível em: https://github.com/brunoreis/palestraGraphQL
