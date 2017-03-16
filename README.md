@@ -620,7 +620,7 @@ Vamos rever o fluxo das informações no react/redux.
 
 https://css-tricks.com/learning-react-redux/
 
-![React and Redux Diagram](https://cdn.css-tricks.com/wp-content/uploads/2016/03/redux-article-3-03.svg)
+![React and Redux Diagram](https://cdn.css-tricks.com/wp-content/uploads/2016/03/redux-article-3-02.svg)
 
 - Como a tela é renderizada
 - Como as propriedades são passadas
