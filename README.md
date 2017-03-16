@@ -121,14 +121,19 @@ PRIMEIRO EXEMPLO
 Buscando campos específicos em objetos: 
 
 
+Exemplo:
+
+```
 {
   hero {
     name
   }
 }
+```
 
---- result --- 
+result
 
+```
 {
   "data": {
     "hero": {
@@ -136,14 +141,18 @@ Buscando campos específicos em objetos:
     }
   }
 }
+```
 
-- query has exactly the same shape as the result
+Repare no formato da consulta e no formato do resultado
+
+O que você vê? 
 
 CAMPOS QUE SÃO OBJETOS
 ======================
 
-navegando no grafo
+Navegando no grafo
 
+```
 thread{
 	id
 	messages{
@@ -152,7 +161,9 @@ thread{
 		sentAt
 	}
 }
--------
+```
+
+```
 {thread:{
 	34
 	messages:[
@@ -168,8 +179,10 @@ thread{
 		},
 	]
 }}
+```
 
-Como é feita a distinção entre um item e uma lista? Pelo schema. 
+Como é feita a distinção entre um item e uma lista? 
+Pelo tipo de retorno declarado no schema. 
 
 Soluções em rest: 
 	1 - criar um endpoint específico que manda as mensagens aninhadas
@@ -183,6 +196,7 @@ ARGUMENTOS
 
 especifique cada campo
 
+```
 thread(id:2){
 	id
 	messages(first:20){
@@ -191,12 +205,14 @@ thread(id:2){
 		sentAt(locale:["pt","BR"])
 	}
 }
+```
 
 Cada campo pode receber seus argumentos. No rest os argumentos são específicos de um request. Essa abordagem do GraphQL repõe completamente múltiplos requests. 
 
 ALIASES
 =======
 
+```
 thread(id:2){
 	id,
 
@@ -212,6 +228,7 @@ thread(id:2){
 		sentAt
 	}
 }
+```
 
 Você pode renomear um campo, para usá-lo mais de uma vez em uma mesma query. 
 
@@ -220,6 +237,7 @@ FRAGMENTOS
 
 para não ficar repetindo campos em uma mesma query ou mesmo em queries diferentes, use fragmentos
 
+```
 thread(id:2){
 	id,
 	firstMessages: messages(first:5){
@@ -229,26 +247,32 @@ thread(id:2){
 		...messageFields
 	}
 }
+```
 
+```
 fragment messageFields on Message {
   id
   text
   sentAt
 }
-
+```
 
 PASSANDO VARIÁVEIS
 ==================
 
+```
 query oneThread($id: ID) {
 	thread(id:$id) {
 		...
 	}
 }
+```
 Variables:
+```
 {
   "id": 2
 }
+```
 
 A primeira linha tem a definição. Onde $id é o nome e "ID" é o tipo. Depois disso a query repõe id na segunda linha pelo valor passado. 
 
@@ -264,6 +288,7 @@ DIRETIVAS
 @include(if: Boolean) Inclui o campo se for true
 @skip(if: Boolean) Pula o campo se for true
 
+```
 thread ($withMessages: Boolean!) {
 	thread{
 		id
@@ -274,12 +299,15 @@ thread ($withMessages: Boolean!) {
 		}
 	}
 }
+```
 
 Variáveis:
+
+```
 {
 	withMessages:true
 }
-
+```
 
 MUTATIONS
 =========
