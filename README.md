@@ -65,13 +65,11 @@ O que acontece com uma requisição recebida:
   	- ótima organização e reuso de requests, principalmente leitura
 
 As requisições de graphql podem ser: 
- - Queries
-   - Recuperam dados a partir de uma query raiz, navegando pelos relacionamentos do grafo. 
-
- - Mutations
-   - Executam uma operação e definem um objeto raiz, que pode ser "navegado", tal qual uma query normal
-
- - A diferença principal entre queries e mutations é a convenção de que apenas as mutations podem alterar dados do sistema. 
+  - Queries
+    - Recuperam dados a partir de uma query raiz, navegando pelos relacionamentos do grafo. 
+  - Mutations
+    - Executam uma operação e definem um objeto raiz, que pode ser "navegado", tal qual uma query normal
+  - A diferença principal entre queries e mutations é a convenção de que apenas as mutations podem alterar dados do sistema. 
 
 http://graphql.org/learn/
 
