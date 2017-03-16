@@ -73,6 +73,9 @@ As requisições de graphql podem ser
 
 	- A diferença principal entre queries e mutations é a convenção de que apenas as mutations podem alterar dados do sistema. 
 
+http://graphql.org/learn/
+
+https://facebook.github.io/graphql/
 
 O QUE É UMA BOA API
 ===================
