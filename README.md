@@ -49,12 +49,12 @@ O QUE É GRAPHQL
 ==================
 
 GraphQL é uma linguagem de 
-    - consulta para sua api 
-    - execução de requisições tipadas em uma camada de runtime no servidor 
-    	- define tipos e campos
-    	- cria resolvers
+  - consulta para sua api 
+  - execução de requisições tipadas em uma camada de runtime no servidor 
+    - define tipos e campos
+    - cria resolvers
 
-- Não é restrita a nenhum DB e pode ser usada como uma camada sobre código já existente. 
+* Não é restrita a nenhum DB e pode ser usada como uma camada sobre código já existente. *
 
 O que acontece com uma requisição recebida
   - recebe uma verificação de tipagem
