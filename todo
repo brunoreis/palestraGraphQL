@@ -1,0 +1,40 @@
+Contexto
+	
+	Gosto muito do Redux, mas sozinho ainda exige muito trabalho. Em especial na parte de acesso assíncrono ao servidor. 
+
+	Falar do lançamento do Apollo 1.0
+
+
+Tratando Erros:
+
+	explicar que há errors e warnings            
+	configurar
+	-----
+	overblog_graphql:
+	    definitions:
+	        show_debug_info: false
+	        schema:
+	            query: Query
+	            mutation: Mutation
+	        exceptions:
+	            types:
+	                errors: "\\AppBundle\\Exceptions\\UserErrorException"
+	-----
+	lançar as exceptions no código para subir mensagens corretas 
+
+	Explicar que, se debug for true, que é caso provável no ambiente de desenv, ele vai passar isso para o executor e tentar lançar a exceção na tela.... Ao lançar a exceção sem o header de cors, não vai dar para vê-la. 
+
+	Aí é possível:
+		olhar o dev.log para ver os erros que aconteceram 
+		ampliar a abrangência do erro na configuração para \Exception
+
+
+
+
+REFERÊNCIAS
+
+Material excelente sobre connections
+	https://dev-blog.apollodata.com/explaining-graphql-connections-c48b7c3d6976
+
+Sobre performance (servidor e resolvers): 
+	https://dev-blog.apollodata.com/optimizing-your-graphql-request-waterfalls-7c3f3360b051

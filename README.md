@@ -699,6 +699,13 @@ https://github.com/Youshido/GraphQL
  - Bem documentado
  - O bundle do symfony já cria um controller que funciona como um endpoint
 
+https://github.com/overblog/GraphQLBundle
+
+https://github.com/webonyx/graphql-php
+
+Ainda não usei, mas parece muito boa. 
+
+
 PLAYGROUND
 ==========
 https://www.reindex.io/docs/
