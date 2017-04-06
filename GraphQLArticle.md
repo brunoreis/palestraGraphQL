@@ -1,135 +1,84 @@
-Let's go fishing - Building our First Mutation
-===============================================
+Overview
+========
 
-#Refactor mutations to use single arg and exclusive return type
-# https://facebook.github.io/jest/
+This is a big article is about a full stack architecture using PHP, Symfony, Doctrine, GraphQL, ApolloJS and React. I'm happy with this architecture, so much that I decided to write this and share it with you. 
 
-Material excelente sobre connections
-https://dev-blog.apollodata.com/explaining-graphql-connections-c48b7c3d6976
-			
+This will happen in two different and alternated ways. In some places I just explain some decisions and how to set up the libs that are used. In other places, I'll drive you through the code, showing some examples and how data flows between the architectural layers. 
 
-Some words about Optimization
-=============================
-			
-	- Optimização
-		Optimize human time, not machine time
-			Premature optimization is one of the cardinal sins of programming
-			I realized that sticking to one query per resolver actually optimized a far more important parameter: 
-				how many hours I spent writing and rewriting code every time the API changed.
-			É mais barato ter menos mão de obra e mais infra. 
-				Principalmente se temos clareza dos gargalos. 
+The code we are going to use is also a big bonus. It's an open source app already built with this architecture. When I was studying some of these technologies, I felt that there were missing code examples on the community for a lot of topics. So I hope that the repositories of knowledge management telegram tool we are using as an example will serve to help you with a lot of nice examples to inspire you.  
 
-	Depois disso pense em otimizar performance
-		Mensure constantemente. 
-		Melhor do que otimizar queries a bancos é usar cache e batching. 
-			Há dúvidas se muitas queries simples são realmente melhores que uma grande.
-				Mas, independentemente disso, o ganho em ter um código limpo é 
-					poder reduzir mão de obra, e a 
-					facilidade e velocidade de manutenção e evolução. 
-			De qualquer forma não tome isso por verdade. Meça, teste e escolha seu caminho. 
+Here they are: 
 
-	Performance: 
+- [backend : PHP,  Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim)
 
-		https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/debug/index.md
+- [frontend: Apollo Client, React Apollo, React and Semantic UI React](https://gitlab.com/bruno.p.reis/nosso-jardim-client)
 
-		---------
-			overblog_graphql:
-			    definitions:
-			        show_debug_info: true
-		---------
-			A toolbar do Symfony funciona melhor
+As they say, a repo is worth a thousand words. Imagine two!
 
-	https://www.youtube.com/watch?v=c35bj1AT3X8 - Excelente, mostra o funcionamento de JS assíncrono e Promisses para então explicar o DataLoader.
-						
-	https://www.youtube.com/watch?v=OQTnXNCDywA - Lee Byron explicando o código fonte do DataLoader.js
+A Different Approach
+====================
 
-	Ferramentas de monitoramento: 
-		http://www.apollodata.com/optics
+Most technical articles on the web are focused on a specific layer of an architecture, or a specific technology/library. That's why they try to be decoupled in order to teach something that you can learn and use with your prefered tech stack. 
 
-	Referências
-		https://scaphold.io/community/blog/apollo-optics-and-your-graphql-server/
-		https://dev-blog.apollodata.com/optimizing-your-graphql-request-waterfalls-7c3f3360b051
+This article takes another approach. The idea here is to show a complete architecture with all the used packages on the frontend and on the backend. You can arguee that, in fact, we are showing twor architectures. One for the front and another one for the backend. I would not arguee with you. The fact is that learning what is here you will be able to build a complete architecture from the graph components layer down to the database.
 
-	Bela Referência: 
-		https://dev-blog.apollodata.com/how-to-build-graphql-servers-87587591ded5
+It does not mean that it will only serve for those that want to use it all. If you use another technologies, of course you can extrapolate from what you will see here, focusing on the rationale behind, and translate the concepts to your own scenario. 
 
-	Backend as a Service
-		https://scaphold.io/
+If you are a beginner, you can learn a lot starting with this exact stack. I really like getting in touch with a more complete app before I start to learn new technologies. If you are an experienced developer, you probably will still find some good examples of how things are done. 
 
-		
+It's impossible to talk about "Best Practices" in a so fast evolving technology scenario. Specially for GraphQL based libs, since it was released two year ago. 
 
-
-
-Is it eatable? 
-===============
-
-This article is about a full stack architecture using PHP, Symfony, Doctrine, GraphQL, ApolloJS and React. I'm very happy with this architecture, so much that I'll share it here. I'll drive you through the code, showing some examples and talking about the libs and decidions made. What code? The code of an open source app already built with this architecture. 
-
-TODO: Add nosso-jardim repo link here.
-
-While we do that I will explain some decisions. I decided to use a real code and not to build something new, because then you will have this code as a reference to learn a lot more than what is written here. As they say: A repo is worth a thousand words. 
-
-Most articles on the web are focused on a specific layer or technology and try to be decoupled in ordr to teach something that you can learn and use with your prefered tech stack. This article takes another approach. Here I talk about the architectural choices I've made and the libs I've choosen. 
-
-If you are experienced with some of this concepts but uses another technologies, of course you can extrapolate fron there, focusing on the rationale behind, and translate the concepts to your own scenario. 
-
-And if you are a beginner, you can learn a lot starting with this exact stack. I hope it serves to you as a starting point. Specially because all the code here is open sourced and can be forked or cloned from these repos: ()
-
-Of course there is not a single way of doing things and these technologies are very recent, so don't take any of this code as a "best practice" thing. It's just my way of doing things and the expression of what I've learned so far. 
-
-We will end up our tour building a GraphQL mutation together so that.... 
-
-TODO - CONTINUE
+With that in mind, I still tried to do my best to use at least BPSF (best practices so far). Of course there is not a single way of doing things. Not even a single way of doing things very well. So please do as you were eating a fish, keep the meat and spit the fishbone.  
 
 Once upon a time...
 ====================
 
-Having a little time to rest from Scalable projects and think about my next personal project, I finally embraced a learning journey I was wishing to do for quite some time. 
+Having a little time to rest from Scalable projects and think about my next personal project, I finally embraced a learning journey I was dreaming about. 
 
-For more than a year I was "dating" some technologies trying to find a better way to engineer my apps. After reading and coding a lot, I'm in a new serious relationship with a new architecture that I want to share with you. 
+For more than a year I was "dating" some technologies trying to find a better way to engineer my apps. After reading and coding a lot, for some months, I now started a serious relationship with some technologies that compose this architecture shared here. 
 
-I was already using React for quite some time. React is a very nice frontend technology and has some paradigm shifts for a frontend tech. It's beauty lies in the fact that you always have a predictable view for a specific model state. The hadaches with a lot of binds and listeneres are mostly gone and the code is a lot more clean and therefore maintainable. 
+I was already using React for quite some time, because I was crazy enough to add it to the project we were rebuilding. React is a very nice frontend technology and has some paradigm shifts for a frontend tech. It's beauty lies in the fact that you always have a predictable view for a specific model state. The hadaches with a lot of binds and listeneres are mostly gone and the code is a lot more clean and therefore maintainable. 
 
-Talking in other terms, a React frontend is a pure function where you pass a model and get a view. Together with Redux, that has a similar approach for state management, they make an almost perfect tool for the frontend apps. IMHO, of course. But, the dream is never perfect. Yet. 
+Talking in other terms, a React frontend is a pure function where you pass a model and get a view. Together with Redux, that has a similar approach for state management, they make a very cool tool for the frontend apps, but something was missing.  
 
-The React+Redux couple lack a good way to load data and integrate with assynchronous data. So, I had to solve that! 
+The R & R couple (React and Redux) lacked a good way to integrate with assynchronous data. So, I started a quest on what to use there. I researched a lot of redux patterns and libs to do this job, but they all seemed to require to much to do the job. 
 
 Looking for solutions, I was hearing a lot of buzz about Relay, and I decided to give it a try. Specially because I like the facebook policy of releasing code they actually use. So I started studying relay.  
 
 Unfortunately, I have to admit that the amount of quality that facebook put on their code is not proportional to the quality they put on the docs of their first releases. Maybe (or probably) that's not true and I'm just not inteligent enought, but the fact is that I had a pretty hard time to learn Relay. Mostly due do the docs and community that were very imature at the time.
 
-That's when I met Apollo, backed by the meteor guys. I already had the impression that the guys (and girls) at meteor group were great on communication, documentation and building community. And I realized that that was also proved on Apollo docs.  
+That's when I met Apollo, backed by the meteor guys. I already had the impression that the guys (and girls) at meteor group were great on communication, documentation and building community. And that was also a truth on Apollo docs.  
 
-That gave me courage to start my first app using a GraphQL client. I was surprised wih the quality of the code and functionalities I found on that client and specially surprised with the great organization I was able to mantain on my react apps, even with complex assynchronous data integrations. 
+Good documentation and community are encouraging factors. And so I started my first app using a GraphQL client. Using it I discovered that Apollo was able to do a lot more than just fetching data from the server. It's cache layer is very well managed, it is able to normalize and denormalize data into there, it can manage subscriptions and also can agregate queries to save requests.  
+
+I was surprised wih the quality of the code and functionalities I found on that client and specially surprised with the great organization I was able to mantain on my react apps using that lib with all it's resources. As you will see down this lines, you can do it all without messing or poluting your view code, with just some additions to your containers. 
 
 The declarative way of composing the views with HOCs wrapping the views now seems as the best and only way of data sourcing a frontend app to me. 
 
-Besides that, GraphQL is a superb technology, language or protocol (pick your choice) to expose and query an API. Created inside Facebook and used into real life hard core projects in an intensive way before being released, GraphQL rocks! ( Don't take me for granted. Take a look here: http://graphql.org/learn/ )
+To use that, I got to know GraphQL, that is a superb language and technology to expose and query an API. Created inside Facebook and used into real life hard core projects in an intensive way before being released, GraphQL rocks! ( Don't take me for granted. Take a look here: http://graphql.org/learn/ )
 
-Learning a new technology is always something you will want to do with some method. I'm already a PHP/Symfony developer for more than 10 years, so that was my choice for backend. I confess I was very inclined to work with the JS implementation at first, but adding too much new stuff is never good in my experience. 
+I'm already a PHP/Symfony developer for more than 10 years, so that was my choice for backend. I confess I was very inclined to work with the JS implementation at first, but adding too much new stuff to a new project is never good in my experience. 
 
-This decision turned out to be a great surprise though. I found mature libs in PHP and the app organization, after a lot of refining, came out to be very good and clean in the backend too. 
+I did not think that GraphQL would also help on the backend organization. And that was a good surprise to me. I found mature libs in PHP and the app organization, after a lot of refining, came out to be very good and clean in the backend too. 
 
-Testing over the API layer, over the GraphQL layer also proved to be a very good decision. I like a lot TDD, but finding the correct amount of tests to move fast and also finding the correct layer to test is a fine art to me. And testing over the GraphQL layer gave me the correct equilibrium I was looking for.  
+Testing the API layer, focusing most on this kind of integration tests, doing unit tests only where needed, also proved to be a very good decision. I like a lot TDD, but finding the correct amount of tests to move fast and also finding the correct layer to test is a fine art to me. And testing over the GraphQL layer gave me the correct equilibrium I was looking for. You will understand it better down in this article too where I explain some tests.  
 
- There are not yet a lot of GraphQL PHP examples on the web. So, I hope this might help a lot of people.
+So, I built these repos and decided to share the knowlege aquired in this article. One think that incentives me too is that there are not yet a lot of GraphQL PHP examples on the web. So, I imagine this will help a lot of people.
 
- OK, so Show me the Money!
- =======================
+OK, enought talking. Show me the Money!
+========================================
 
-Take a look what we are gonna talk about here:
+This is our Roadmap
 
-	GraphQL Intro
-	The server
-		- GraphiQL - Navigating our project API
-		- Technical details
-			- The Schema declaration
-			- the overblog lib
-			- nelmio cors
-			- resolvers and doctrine
-			- 
+	1 Basic Alignment 
+	2 Backend Code Installation
+	3 Knowing our App
+	4 The Schema - Using GraphiQL to explore the API
+	5 Overblog GraphQL
+	6 The Schema Declaration - The entrance to the backend
+	7 Following a complete backend query
 
-Basic Alignment 
+1 Basic Alignment 
 ================
 
 GraphQL was developed into Facebook at 2012 and open-sourced in 2015
@@ -141,8 +90,8 @@ This article does not cover the basics of GraphQL, but you can lear it [on this 
 
 And [this talk from Lee Byron and ...|https://www.youtube.com/watch?v=ViXL0YQnioU] can give you some insights on where it's heading to. 
 
-Put the code on your machine and follow us on the ride
-=======================================================
+2 Backend Code Installation
+=========================
 So, let's get our hands dirty.
 
 Clone the repo
@@ -151,8 +100,8 @@ Import Fixtures and Data
 Start php server
 Go to the GraphiQL
 
-Our domain. The app we are gonna work on. 
-==========================================
+3 Knowing our App
+===============
 
 Let's understand our app domain prior to looking at the API. 
 
@@ -174,8 +123,8 @@ These examples can ilustrate how to handle these data structures on front and ba
 
 The frontend you see in the image is built using React, Semantic React and Apollo Client. (add links to the projects)
 
-Let's look at our schema with GraphiQL - Long life to our API Docs!
-====================================================================
+4 The Schema - Using GraphiQL to explore the API
+==============================================
 
 This days I was on a talk and in the "Any Questions?" moment we discussed the relevance of a good documentation. The arguments were the typical traditional ones: 
 	1 code needs to be well documented because.... 
@@ -208,8 +157,8 @@ Mutations also can be run from the GraphiQL, serving as a complete tool to inter
 
 Well, I hope that, for now, you got a basic understanding, or at least a feeling of the system we are going to work on. So, get your flippers and lets dive deeper on the code!
 
-GraphQL lib and the Schema Declaration
-=======================================
+5 Overblog GraphQL
+==================
 
 To build the GraphQL server over symfony, we are using the overblog/GraphQLBundle lib. (https://github.com/overblog/GraphQLBundle) 
 
@@ -221,21 +170,24 @@ As you can see on it's [requirements|https://github.com/overblog/GraphQLBundle/b
 
 	2 - webonyx/graphql-php - This is the real engine of our car. A PHP port of GraphQL reference implementation. Very stable and ready to use. Please take a look at the docs and I call special attention to the 
 
+6 The Schema Declaration - The entrance to the backend
+======================================================
+
 Our schema declaration is under src/AppBundle/Resources/config/graphql/
 Queries are defined in the Query.types.yml. The fields there are the system queries, possible args are defined there and the resolvers are also set there. 
 
 So we can understand that this file is the entrance on our system. It defines the API interface with the outter word. 
 
-Entring the sea for the first time
-==================================
+7 Following a complete backend query
+====================================
 
-From there, it direct the calls to specific resolvers, using the nice [expression language||https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/expression-language.md] ofered by the overblog bundle. 
+So, as we have seen, the schema is the entrance to the backend. From there, it direct the calls to specific resolvers, using the nice [expression language](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/expression-language.md) ofered by the overblog bundle. 
 
 Take a look at the item field or query: 
 
 ```yml 
-		#Queries.types.yml
-		...
+#Queries.types.yml
+#...
 		fields:
             item:
                 type: "Item"
@@ -243,22 +195,22 @@ Take a look at the item field or query:
                     id:
                         type: "ID!"
                 resolve: "@=service('app.resolver.items').findOne(args)"
-        ...
+#...
 ```
 
-It defines the id argument, set it's type as ID and also inform that it's required (!). It also declares the resolver as bing the service defined as "app.resolver.items", that is then requested from SF DI container. It also passes the received args object straight to the resolver method "findOne". Let's look at "findOne": 
+It defines the id argument, set it's type as ID and also inform that it's required (!). It also declares the resolver as bing the service defined as "app.resolver.items", that is then requested from symfony dependency injection container. It also passes the received args object straight to the resolver method "findOne". Let's look at "findOne": 
 
 ```php 
-		#AppBundle\Resolver\ItemsResolver.php
-		...
-		public function findOne($args)
-	    {   
-	        $id = $args['id'];
-	        $item = $this->repo()->find( $id );
-	        if(!$item) throw new UserErrorException("Item not found for id " . $id, 1);
-	        return $item;
-	    }
-        ...
+#AppBundle\Resolver\ItemsResolver.php
+#...
+	public function findOne($args)
+    {   
+        $id = $args['id'];
+        $item = $this->repo()->find( $id );
+        if(!$item) throw new UserErrorException("Item not found for id " . $id, 1);
+        return $item;
+    }
+#...
 ```
 
 That's a normal code you would expect in a controller, but as you can see, the GraphQL bundle adds some very nice goodies, saving our time on repetitive tasks we usually need to do on controllers or to build as a layer by ourselves.
@@ -269,7 +221,7 @@ Second, it will transform the object we return in the desired response. I say de
 
 It can be called like this
 
-```yml
+```graphql
 {
 	item(id:2) {
 	  	id
@@ -280,7 +232,7 @@ It can be called like this
 
 and the GraphQL layer will look into the returned object for 'id' and 'name' and build a response like
 
-```yml
+```graphql
 {
   "data": {
     "item": {
@@ -294,7 +246,6 @@ and the GraphQL layer will look into the returned object for 'id' and 'name' and
 After building that, the GraphQL layer will check to see if the values are correct according to the Item.types.yml field declarations. If it's ok it will then send that response to the client as a 'JsonResponse'. 
 
 If you are like me and like to take a look at the source to understand what you are using, you can start looking at 'Overblog\GraphQLBundle\Controller::endpointAction'. That's the controller that establishes the graphql endpoint for all the requests. From there it will call the executor and make all this fun to happen. 
-
 
 Back to the Boat
 ================ 
@@ -813,3 +764,62 @@ To write this mutations we are going to follow some [principles about designing 
 
 
 
+Let's go fishing - Building our First Mutation
+===============================================
+
+#Refactor mutations to use single arg and exclusive return type
+# https://facebook.github.io/jest/
+
+Material excelente sobre connections
+https://dev-blog.apollodata.com/explaining-graphql-connections-c48b7c3d6976
+
+
+Some words about Optimization
+=============================
+			
+	- Optimização
+		Optimize human time, not machine time
+			Premature optimization is one of the cardinal sins of programming
+			I realized that sticking to one query per resolver actually optimized a far more important parameter: 
+				how many hours I spent writing and rewriting code every time the API changed.
+			É mais barato ter menos mão de obra e mais infra. 
+				Principalmente se temos clareza dos gargalos. 
+
+	Depois disso pense em otimizar performance
+		Mensure constantemente. 
+		Melhor do que otimizar queries a bancos é usar cache e batching. 
+			Há dúvidas se muitas queries simples são realmente melhores que uma grande.
+				Mas, independentemente disso, o ganho em ter um código limpo é 
+					poder reduzir mão de obra, e a 
+					facilidade e velocidade de manutenção e evolução. 
+			De qualquer forma não tome isso por verdade. Meça, teste e escolha seu caminho. 
+
+	Performance: 
+
+		https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/debug/index.md
+
+		---------
+			overblog_graphql:
+			    definitions:
+			        show_debug_info: true
+		---------
+			A toolbar do Symfony funciona melhor
+
+	https://www.youtube.com/watch?v=c35bj1AT3X8 - Excelente, mostra o funcionamento de JS assíncrono e Promisses para então explicar o DataLoader.
+						
+	https://www.youtube.com/watch?v=OQTnXNCDywA - Lee Byron explicando o código fonte do DataLoader.js
+
+	Ferramentas de monitoramento: 
+		http://www.apollodata.com/optics
+
+	Referências
+		https://scaphold.io/community/blog/apollo-optics-and-your-graphql-server/
+		https://dev-blog.apollodata.com/optimizing-your-graphql-request-waterfalls-7c3f3360b051
+
+	Bela Referência: 
+		https://dev-blog.apollodata.com/how-to-build-graphql-servers-87587591ded5
+
+	Backend as a Service
+		https://scaphold.io/
+
+		
