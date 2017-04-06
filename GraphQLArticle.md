@@ -129,7 +129,7 @@ We are gonna work on a **Knowledge Management App**. The main purpose of this ap
 
 The mais screen, as shown below, is where you **organize messages in threads and put tags on those threads**. Those are the main functionalities right now. The possible tags to be applied are organized into a tree that can be acessed on the Subtopics nav tab. 
 
-	[TODO Screen Capture showing the creation of a thread and adding a tag]
+![Create a Thread and Tag it!](./images/createThread.gif)
 
 This gives us interesting data structures to serve as examples:
 
