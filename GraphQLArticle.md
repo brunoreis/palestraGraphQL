@@ -133,30 +133,38 @@ The mais screen, as shown below, is where you **organize messages in threads and
 
 This gives us interesting data structures to serve as examples:
 
-1. A paginated (ininite scroll) list - Messages
+1. A paginated list - Messages
 2. A non paginated list - Threads
-3. A tree - Subtopics
+3. A tree - Subtopics (not shown in the gif)
 4. Lots of simple views, menus and buttons.
-5. Forms and data edition - Add tag, Edit Subtopic, Add Subtopic, and so on...
+5. Forms and data edition - Add Tag, Edit Subtopic, Add Subtopic, and so on...
 
 These examples are all available on the repository code and can ilustrate how to handle these data structures on front and backend. 
 
-The frontend you see in the image is built using React, Semantic React and Apollo Client. 
+**The frontend you see in the image is built using React, Semantic React and Apollo Client.**
 
 ## The Schema - Using GraphiQL to explore the API
 
-This days I was on a talk and in the "Any Questions?" moment we discussed the relevance of a good documentation. The arguments were the typical traditional ones: 
-	1 code needs to be well documented because.... 
+This days I was on a talk and in the "Any Questions?" moment we discussed the relevance of a good documentation. The arguments were mostly diveded into the typical: 
+
+1. (old school) code needs to be well documented because.... 
 And XP ones: 
-	2 the best docs are method names and code organization and any docs on the annotations are fated to die.
+2. (xp) the best docs are method names and code organization and any docs on the annotations are fated to die.
 
-I'm more of a #2 guy. I have never seen a project with annotations being kept in synch with the code for a medium period of time. But I acknowlege that docs are important in some places. So, taking the lazyness assumption of most human beings, I think that it's possible to keep a synched documentation, given that: 
-	1 It's used very often. 
-	2 It's very easy to edit and mantain. 
+I assume I'm more of a #2 guy. I have never seen a project with documentation done in a different location from the code, even annotations, being kept in synch with the code for a medium period of time. 
 
-Also, I feel the most outer/public layers of apps are the ones that should have the best docs. GraphQL answer all these questions. It's the outer layer of a server app, that might even be used by different devices. It has an instrospection system that already keeps most things up to date, and has specific fields to document the system that are as easy to mantain as the own API schema declaration.
+But I do acknowlege that docs are important in some places. So, taking the lazyness assumption of most human beings, I think that it's possible to keep a synched documentation, given that: 
 
-A powerful tool that is used to that is GraphiQL. You can navigate through docs, know all queries, mutations, fields and types and even args. You can also bake and run real queries in it using auto-complete and a nice reference. That's, per se, a fantastic technology. Look at it: 
+1. It's used very often. 
+2. It's very easy to edit and mantain. 
+
+Also, I feel the most outer/public layers of apps are the ones that should have the best docs. 
+
+**And GraphQL answer all these concerns. **
+
+It's the outer layer of a server app, that might even be used by different devices. So it's the most public layer. It has an instrospection system that already keeps most things up to date, and has specific fields to document the system that are as easy to mantain as the own API schema declaration.
+
+A powerful tool that is used to generate those docs is GraphiQL. You can navigate through docs, know all queries, mutations, fields and types and even args. You can also bake and run real queries in it using auto-complete and a nice reference. That's, per se, a fantastic technology. Look at it: 
 
 
 3 screen captures
