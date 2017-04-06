@@ -78,13 +78,13 @@ Our Roadmap
         A Different Approach
         Once upon a time...
     Backend
-    	Basic Alignment 
-    	Backend Code Installation
-    	Knowing our App
-    	The Schema - Using GraphiQL to explore the API
-    	Overblog GraphQL
-    	The Schema Declaration - The entrance to the backend
-    	Following a complete backend query
+        Basic Alignment 
+        Backend Code Installation
+        Knowing our App
+        The Schema - Using GraphiQL to explore the API
+        Overblog GraphQL
+        The Schema Declaration - The entrance to the backend
+        Following a complete backend query
         A little Recap
         Cors
         Error Handling
@@ -125,7 +125,7 @@ Go to the GraphiQL
 
 **Let's understand our app domain** prior to looking at the API. 
 
-We are gonna work on a **Knowledge Management App*. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
+We are gonna work on a **Knowledge Management App**. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
 
 The mais screen, as shown below, is where you **organize messages in threads and put tags on those threads**. Those are the main functionalities right now. The possible tags to be applied are organized into a tree that can be acessed on the Subtopics nav tab. 
 
