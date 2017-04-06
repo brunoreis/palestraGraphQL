@@ -41,7 +41,7 @@ I'm already a **PHP/Symfony** developer for a long time, so that was my choice f
 
 I found mature libs in PHP and the app organization, after a lot of refining, came out to be very good and clean in the backend too. Indeed, **GraphQL helped me a lot on that Backend organisation.** 
 
-Another choise here was running most tests over the API layer, what also proved to be a very good decision. I like a lot **TDD**, but finding the correct amount of tests to move fast and also finding the correct layer to test is a fine art to me. 
+Another decision taken was running most tests over the API layer, what also proved to be a very good decision. I like a lot **TDD**, but finding the correct amount of tests to move fast and also finding the correct layer to test is a fine art to me. 
 
 Well, this stuff is hard to talk about, so please take a look at the code([1](https://gitlab.com/bruno.p.reis/nosso-jardim)[2](https://gitlab.com/bruno.p.reis/nosso-jardim-client)) to get an overall feeling befor we start. Or, if you are not in a mood, just follow along.
 
@@ -117,11 +117,11 @@ GraphQL seems to do a nice job keeping the docs the most updated with the code i
 
 Specially because it always shows on the tool we use to interact with it, the GraphiQL. On it, you can navigate through docs, know all queries, mutations, fields and types and even args. You can also bake and run real queries in it using auto-complete and a nice reference. Take a look:
 
-[Looking at the Documentation](./images/documentation.gif)
+![Looking at the Documentation](./images/documentation.gif)
 
 See how the docs are easily available. Queries and Mutations, arguments, argument types are all documented and easily accessible. 
 
-[Running Queries](./images/runningQueries.gif)
+![Running Queries](./images/runningQueries.gif)
 
 You can run [queries](https://dev-blog.apollodata.com/the-anatomy-of-a-graphql-query-6dffa9e9e747) using GraphiQL and see the results right there, with the docs on the right where you can check for the types and formats. 
 
