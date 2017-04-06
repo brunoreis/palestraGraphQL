@@ -200,7 +200,7 @@ Take a look at the item field or query:
 ```yml 
 #Queries.types.yml
 #...
-		fields:
+        fields:
             item:
                 type: "Item"
                 args:
