@@ -115,17 +115,15 @@ Ok, now that you understand what we will be working on, grab the backend code.
 
 GraphQL seems to do a nice job keeping the docs the most updated with the code it can. A good part of the documentation is introspected from the schema, and the rest is also defined ther. Since the schema is live and used frequently, that helps us to keep docs up to date. 
 
-Specially because it always shows on the tool we use to interact with it, the GraphiQL. On it, you can navigate through docs, know all queries, mutations, fields and types and even args. You can also bake and run real queries in it using auto-complete and a nice reference. Take a look:
+Specially because it always shows on the tool we use to interact with it, the GraphiQL. On it, you can navigate through docs, know all queries, mutations, fields and types and even args. You can also bake and run real queries in it using auto-complete and a nice reference. Take a look how the docs are easily available. Queries and Mutations, arguments, argument types are all documented and easily accessible:
 
 ![Looking at the Documentation](./images/documentation.gif)
 
-See how the docs are easily available. Queries and Mutations, arguments, argument types are all documented and easily accessible. 
+You can run [queries](https://dev-blog.apollodata.com/the-anatomy-of-a-graphql-query-6dffa9e9e747) using GraphiQL and see the results right there, with the docs on the right where you can check for the types and formats. 
 
 ![Running Queries](./images/runningQueries.gif)
 
-You can run [queries](https://dev-blog.apollodata.com/the-anatomy-of-a-graphql-query-6dffa9e9e747) using GraphiQL and see the results right there, with the docs on the right where you can check for the types and formats. 
-
-Go ahead and take a look at the schema and queries available to understand our domain.
+Go ahead, take some time now, navigate through GraphiQL and look at the schema and queries available to understand our domain. I should be under /graphiql in the address your php server is runnig. Probably on 127.0.0.1:8000/graphiql
 
 ## Overblog GraphQL
 
