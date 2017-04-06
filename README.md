@@ -722,3 +722,13 @@ TODO
 
 - Explicação básica de react
 - Abrir o código do sistema
+
+## Quick GraphQL Overview
+
+GraphQL was developed into Facebook at 2012 and [open-sourced](https://code.facebook.com/posts/1691455094417024/graphql-a-data-query-language/) in 2015
+
+Today it has achieved an incredible growth. With less than two years being released it already has implementations in over [15 different server side languages, quite a few client implementations and even dedicated services.](https://github.com/chentsulin/awesome-graphql) 
+
+**In this article, we are not going to cover the basics of GraphQL**, so if you don't know anything about it, please [read here](http://graphql.org/learn/). 
+
+And also, [this talk from Laney Kuenzel & Lee Byron](https://www.youtube.com/watch?v=ViXL0YQnioU) can give you some insights on it's size and where it's heading to.

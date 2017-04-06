@@ -43,7 +43,7 @@ I found mature libs in PHP and the app organization, after a lot of refining, ca
 
 Another choise here was running most tests over the API layer, what also proved to be a very good decision. I like a lot **TDD**, but finding the correct amount of tests to move fast and also finding the correct layer to test is a fine art to me. 
 
-All this stuff is hard to talk about, so please take a look at the code to get an overall feeling befor we start. 
+Well, this stuff is hard to talk about, so please take a look at the code([1](https://gitlab.com/bruno.p.reis/nosso-jardim)[2](https://gitlab.com/bruno.p.reis/nosso-jardim-client)) to get an overall feeling befor we start. Or, if you are not in a mood, just follow along.
 
 ## Our Roadmap
 
@@ -52,10 +52,9 @@ All this stuff is hard to talk about, so please take a look at the code to get a
         Driving Forces
         Our Roadmap (<-you are here)
     Backend
-        Basic Alignment 
-        Backend Code Installation
-        Knowing our App - The View
-        Knowing our App - The Schema and API
+        The App we are gonna look at
+        Installation
+        The API Schema
         Overblog GraphQL
         The Schema Declaration - The entrance to the backend
         Following a complete backend query
@@ -75,29 +74,11 @@ All this stuff is hard to talk about, so please take a look at the code to get a
 
 # Backend
 
-We are going to explore a [PHP backend with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim)
+We are going to explore a [PHP backend with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim) 
 
-## Basic Alignment 
+## The App we are gonna look at.
 
-GraphQL was developed into Facebook at 2012 and [open-sourced](https://code.facebook.com/posts/1691455094417024/graphql-a-data-query-language/) in 2015
-
-Today it has achieved an incredible growth. With less than two years being released it already has implementations in over [15 different server side languages, quite a few client implementations and even dedicated services.](https://github.com/chentsulin/awesome-graphql) 
-
-**In this article, we are not going to cover the basics of GraphQL**, so if you don't know anything about it, please [read here](http://graphql.org/learn/). 
-
-And also, [this talk from Laney Kuenzel & Lee Byron](https://www.youtube.com/watch?v=ViXL0YQnioU) can give you some insights on it's size and where it's heading to. 
-
-## Backend Code Installation
-
-1. [Clone the backend repo.](https://gitlab.com/bruno.p.reis/nosso-jardim)
-2. Run composer install and configure your parameters
-3. Import Fixtures and Data
-4. Start the php server
-5. Read the next section so that you can look at GraphiQL knowing the app
-
-## Knowing our App
-
-**Let's understand our app domain** prior to looking at the API. 
+I know we are talking about backend, but, the view is good to understand our app domain. So let's do it before we install the backend and look at it's API. 
 
 We are gonna work on a **Knowledge Management App**. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
 
@@ -119,17 +100,28 @@ This App gives us interesting data structures to serve us as an example:
 
 **The frontend you see in the image is built using React, Semantic React and Apollo Client.**
 
-## Knowing our App - The Schema and API
+Ok, now that you understand what we will be working on, grab the backend code.
+
+## Installation
+
+1. [Clone the backend repo.](https://gitlab.com/bruno.p.reis/nosso-jardim)
+2. Run composer install and configure your parameters
+3. Import Fixtures and Data
+4. Start the php server
+5. Read the next section so that you can look at GraphiQL knowing the app
+
+
+## The API Schema
 
 GraphQL seems to do a nice job keeping the docs the most updated with the code it can. A good part of the documentation is introspected from the schema, and the rest is also defined ther. Since the schema is live and used frequently, that helps us to keep docs up to date. 
 
 Specially because it always shows on the tool we use to interact with it, the GraphiQL. On it, you can navigate through docs, know all queries, mutations, fields and types and even args. You can also bake and run real queries in it using auto-complete and a nice reference. Take a look:
 
-	[Documentation](./images/documentation.gif)
+[Looking at the Documentation](./images/documentation.gif)
 
 See how the docs are easily available. Queries and Mutations, arguments, argument types are all documented and easily accessible. 
 
-	[Documentation](./images/runningQueries.gif)
+[Running Queries](./images/runningQueries.gif)
 
 You can run [queries](https://dev-blog.apollodata.com/the-anatomy-of-a-graphql-query-6dffa9e9e747) using GraphiQL and see the results right there, with the docs on the right where you can check for the types and formats. 
 
