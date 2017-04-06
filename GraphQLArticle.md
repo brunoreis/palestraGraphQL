@@ -77,6 +77,18 @@ This is our Roadmap
 	5 Overblog GraphQL
 	6 The Schema Declaration - The entrance to the backend
 	7 Following a complete backend query
+    8 A little Recap
+    9 Cors
+    10 Error Handling
+    11 Testing your code
+    12 Installing the frontend
+    13 Frontend
+    14 Our next destination: MessageStatus View Component
+    15 Integrating data with containers
+    16 Diving deepen into the PEERS query
+    17 Integration between Apollo containers and also Redux
+    18 Verification Point
+
 
 1 Basic Alignment 
 ================
@@ -217,59 +229,56 @@ That's a normal code you would expect in a controller, but as you can see, the G
 
 First, it defines the expected input. Before passing data to the resolver it will check for the 'id' field requirement and type. So, you can be sure it's there when you write your code.
 
-Second, it will transform the object we return in the desired response. I say desired response because this query can be called in different ways, depending on the client needs. 
+Second, it will transform the object we return in the desired response. I say desired response because this query can be called in different ways, depending on the client needs and will return different fields and even "join fields" according to to what the client has requested. 
 
-It can be called like this
+After building the response on the server, what is done by the resolver, the GraphQL layer there will check to see if the values are correct according to the return type of that query. 
 
-```graphql
-{
-	item(id:2) {
-	  	id
-	  	name
-	}
-}
+In that case, the declared type for that query is "Item". And, being so, it will look at Item.types.yml to understand that type and it's field declarations. If the response field types are ok, validated against that, then it will send that response to the client as a 'JsonResponse'. 
+
+```yml
+Item:
+    type: object
+    config:
+        description: "A media type"
+        fields:
+            id:
+                type: "ID!"
+                description: "The id of the item."
+            subtopic:
+                type: "Subtopic"
+                description: "The subtopic refined by this item"
+            name:
+                type: "String"
+                description: 'The name of this item'
 ```
 
-and the GraphQL layer will look into the returned object for 'id' and 'name' and build a response like
+If you are like me and like to take a look at the source to understand what you are using, you can start looking at [the controller endpoint action](https://github.com/overblog/GraphQLBundle/blob/master/Controller/GraphController.php#L20). That's the controller that establishes the graphql endpoint for all the requests. From there it will call the executor and make all this fun to happen. And from there you can explore a little more how the bundle integrate the webonyx graphql lib into symfony. 
 
-```graphql
-{
-  "data": {
-    "item": {
-      "id": "2",
-      "name": "Laranjeiras Verde"
-    }
-  }
-}
-```
 
-After building that, the GraphQL layer will check to see if the values are correct according to the Item.types.yml field declarations. If it's ok it will then send that response to the client as a 'JsonResponse'. 
+8 A little Recap
+================
 
-If you are like me and like to take a look at the source to understand what you are using, you can start looking at 'Overblog\GraphQLBundle\Controller::endpointAction'. That's the controller that establishes the graphql endpoint for all the requests. From there it will call the executor and make all this fun to happen. 
-
-Back to the Boat
-================ 
-
-Well, this is a lot of information so far, so I suggest a little recap now. I know I explained a lot about GraphQL and it's workings, and also about the libs we are using. So, after setting up all this army, all this power, what was really left to us: 
+Well, this is a lot of information so far, so I suggest a little recap now. I know I explained a lot about GraphQL and it's inner workings, and also about the libs we are using. So, I think that it's important to us to see, after setting up all this army, all this power, what was really left to us: 
 
 1 - define a single field entry on the Query.types.yml
 2 - writting the resolver, completely focused on my business logic. 
 3 - nothing else. 
 
-Hey, this is beautifull! No need to write a lot of controllers, no need to think about routes since you have only one endpoint, good documentation being generated mostly by introspection and a tool to interact and test your api (graphiQL). 
+Hey, this is beautifull! Take a look: 
+    - no need to write a lot of controllers
+    - no need to think about routes since you have only one endpoint
+        - at least to me thinking in terms of fields and objects is a lot easier than comming up with some restful logic to map uris to business
+    - good documentation being generated 
+        - most part of it by introspection
+    - a tool to interact and test your api (graphiQL). 
+    - The best: focus on your business logic. 
 
-Before we do our second diving session, I'll talk a little more about the architecture. 
+As I've said before, while building the backend my first objective was only to have a clean and nice schema to be accessed from outside. But, I got surprised on how the GraphQL approach made my write less boilerplate code on the server. And also satisfied by the resulting code organization. 
 
-The frontend is a completely separated repo and can even be hosted in a completely different environment than the backend. Maybe a CDN?! Please, clone it now and make it run on your machine. 
+Let's talk a little now about some other issues I had to deal in the server development. 
 
-1 - clone
-2 - npm install
-3 - go to your browser
-
-If you take a look at scripts/start.js you will see that it uses WebpackDevServer. On my machine it will start on localhost:3000. The symfony server, started with server:run, runs into port 8000 and I was getting a lot of cors issues.
-
-Cors
-====
+9 Cors
+======
 This app is not on a prod server yet, but I intend to keep the server in a different env, so I installed the [NelmioCorsBundle|https://github.com/nelmio/NelmioCorsBundle]
 
 The configurations today are very open and will need to be a lot more string on a prod server. But, I just wanted you to note that it's running and will help you to avoid a lot of errors seen on the frontend client. 
@@ -278,25 +287,21 @@ It's also worth noticing that I had to add 'content-type' as an allowed header i
 
 If you don't know this bundle yet, it's worth taking a look at it. It will manage the headers sent and specially the OPTIONS pre-flight requests to enable cross origin resource sharing. In other words, will enable you to call your API from a different domain. 
 
-Error Handling
-==============
+10 Error Handling
+=================
 
-Error handling is a very open topic on GraphQL world. The specs don't say a lot 
-[1|https://facebook.github.io/graphql/#sec-Errors]
-[2|https://facebook.github.io/graphql/#sec-Executing-Operations]
-and are open to a lot of interpretations. And, as we can see by the community, there are a lot of different opinions on how to handle them. 
-[1|https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1]
-[2|https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf]
+Error handling is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. And, as we can see by the community, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
+
 Being GraphQL so recent, it's expected that you don't have well established best practices on it yet. And this is something nice to take into consideration when designing your system. Maybe you see a better way of doing things. So, please do it, test, and share with us. 
 
-Overblog deals with errors in a manner that is nice to me. First, it will add normal validation errors when it encounter them on the data validation of input or output types. 
+Overblog deals with errors in a manner that is good enough me. First, it will add normal validation errors when it encounter them on the data validation of input or output types. 
 
 Second, it will handle the exceptions thrown in the resolvers. When it catches an exception, it will add an error to the response. Almost all exceptions are added as an "internal server error" generic message. The only two Exception types (and subtypes) that are not translated to this generic message are: 
 
 - ErrorHandler::DEFAULT_USER_WARNING_CLASS
 - ErrorHandler::DEFAULT_USER_ERROR_CLASS
 
-These can be [configured|https://github.com/overblog/GraphQLBundle/blob/master/DependencyInjection/Configuration.php#L101] on your config.yml with your own exceptions: 
+These can be [configured](https://github.com/overblog/GraphQLBundle/blob/master/DependencyInjection/Configuration.php#L101) on your config.yml with your own exceptions: 
 
 ```yml
 overblog_graphql:
@@ -326,15 +331,15 @@ if you pass a non existent id to that query, it will return a nice user friendly
 [Sreen Capture of this happening on GraphiQL]
 
 
-To understand it a little deeper, please put your diving mask and look under the sea at the class that implements this handling: "Overblog\GraphQLBundle\Error\ErrorHandler"
+To understand it a little deeper, please put your diving mask and look at the class that implements this handling: "Overblog\GraphQLBundle\Error\ErrorHandler"
 
 The ErrorHandles is also responsible to put the stack trace on the response. But, it will only do it if the symfony debug is turned on. That is normally done on the "$kernel = new AppKernel('dev', true);" call. I encourage you to test sending a non existent id to that query with debug==true and with debug==false and seing the response. You can do that on GraphiQL. 
 
 To finalize our explanation on this subject, it's also worth noticing that exceptions are also logged on dev.log.  
 
 
-Testing your code
-=================
+11 Testing your code
+====================
 
 The most radical XP coders would say that legacy code is any code that is not tested. Even if it was written today. I'm not so hard on that, but I really like to have a good test suite over my apps. In fact, we started this app with a very different architecture, using other libs and layers, and we would probably not have being able to refactor it to it's actual state of art without it's test suite. 
 
@@ -418,13 +423,26 @@ Let's take a look at a complete test. Comments are on the code to help your unde
 
 To run tests without errors, I need to clean the cache. I've not inspected the reasons on that yet, but it feels like a bug on the generation of the cached graphql types. Anyway, I just use a command like this everytime: 
 
+```
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Subtopics/Mutations/DeleteTest.php
+```
 
 I encourage you to open SubtopicsTestHelper and follow and understand the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). There you will be able to see the GraphQL call happening and the json path component being wrapped in the returning funcion. 
 
-Frontend
-========
-You start wetting your feet and dressing your flippers and diving mask again. The next dive will go deeper, looking also at the frontend. So, before that, let's get a brief overview of the frontend. 
+12 Installing the frontend
+========================== 
+
+The frontend is a completely separated repo and can even be hosted in a completely different environment than the backend. Maybe a CDN?! Please, clone it now and make it run on your machine. 
+
+1 - clone the repository
+2 - npm install
+3 - go to your browser
+
+If you take a look at scripts/start.js you will see that it uses WebpackDevServer. On my machine it will start on localhost:3000. The symfony server, started with server:run, runs into port 8000 and I was getting a lot of cors issues.
+
+13 Frontend
+===========
+You start wetting your feet and dressing your flippers and diving mask again. The next dive will be at the frontend. So, before that, let's get a brief overview of the frontend. 
 
 Views are built using react. React allows us to have an excelent and clear code with nice component composition. It has a virtual doom and, everytime the model changes, it will render the view again. But it will do it virtually first, calculate what is really needed to change on the actual browser dom, and, having made that "diff", it will just render/change those parts.
 
@@ -446,12 +464,12 @@ Ok, so we have React (react) + Apollo (apollo-client) + React Apollo (react-apol
 
 Ok. Enough talk. Let's dive in. 
 
-Our next destination: MessageStatus component
-=============================================
+14 Our next destination: MessageStatus View Component
+=====================================================
 
-Ok, please clean your snorkel. We are gonna look at the MessageStatus component now. 
+Ok, you can now blow your snorkel. We are gonna look at the MessageStatus component now. 
 
-[img|images/messageStatus.png]
+[img](https://raw.githubusercontent.com/brunoreis/palestraGraphQL/master/images/messageStatus.png)
 
 This component has the total messages information and also has a combo where we can select the peer we want to use as a filter to list the messages below. BTW, just in case you don't speak brazilian portuguese, "mensagens" means "messages".
 
@@ -471,9 +489,11 @@ So, take a look at the MessageStatus.js code. It's stored in the routes/Messages
 and return what will be rendered. The good catch here is that it will always return the same result for the same parameter values. So it behaves like a pure function, isolating the view logic and making it easily and isolated testable.
 
 
-Wrap it Up!
-===========
-So far, it's "just" react! Here is where things start getting fun. If you look at the MessagesPage component, it doen not include MessageStatus, but instead, it includes the <MessageStatusContainer/> component. Containers are a special kind of components, where data integration and injections are made. They use HOCs to wrap react components and add behaviour to it. If you look at the MessageStatusContainer you can notice 4 hocs being added. 
+15 Integrating data with containers
+===================================
+So far, it's "just" react! Blu sea, no big waves or strong sea currents. Here is where things start getting fun. If you look at the MessagesPage component, it doen not include MessageStatus, but instead, it includes the <MessageStatusContainer/> component. 
+
+Containers are a special kind of components, where data integration and injections are made. They use HOCs to wrap react components and add behaviour to it. If you look at the MessageStatusContainer you can notice 4 hocs being added. 
 
 ```js
 export default compose(
@@ -552,10 +572,10 @@ So, I made myself a little rule of thumb that is fantastic and very simple: Prop
 
 Let's look at the peer list query first. 
 
-The PEERS all the way down.
-===========================
+16 Diving deepen into the PEERS query
+=====================================
 
-First, if you looked at the complete source code, you probably noticed the inclusion of that query: 
+Take a breath and dive again. First, if you looked at the complete source code, you probably noticed the inclusion of that query: 
 
 ```
 import PEERS_QUERY from '../queries/peers.graphql'
@@ -645,10 +665,10 @@ Peer:
 
 So, if the peers array returned from our graphQL server, and it schema declares this type for the Peer type, we can expect that it has being validated on the server and has the correct format an types. Having this safety net to help our work is very very helpful. Especially on that place, that is the client-server communication. 
 
-What else we can learn since we are already here? 
-=================================================
+17 Integration between Apollo containers and also Redux
+========================================================
 
-Since we've at this depth, let's look arount. Maybe we can find an oyster with a pearl. 
+What else we can learn since we are already here? Since we've at this depth, let's look arount. Maybe we can find an oyster with a pearl. 
 
 Let's take another look at the parameters received by MessageStatus and see what else we can learn by tracking them:
 
@@ -744,15 +764,15 @@ The function passed to options has this signature: (ownProps) => configObject. S
 
 So we just learned how to integrate a Redux managed prop into Apollo, right? This is something very usefull and one of the points I've struglled a lot on my learning journey on this. 
 
-Verification Point
-==================
+18 Verification Point
+=====================
 Back to our boat. Let's take a breath. So far we've looked at the PHP Server, learned how it's structured, how it defines our schema and how to handle errors and write tests using our proposed architecture. After having that backend set up, we dived into the frontend. We learned about it's structure and components and looked closer at a query declaration. Being there, we also looked at how to integrate our normal redux store with apollo. 
 
 So far the trip was fun, and it's gonna continue on that pace, if you have the guts to follow with me. We will now take a look at an existing mutation to understand how it works. And, to finalize our article, we will take a look at performance considerations and learn how to improve performance, keeping our flexibility to grow and refactor fast when needed. 
 
 
-Mutations - Let's improve our informations on the the thread 
-=============================================================
+19 Mutations - Let's improve our informations on the the thread 
+===============================================================
 
 We are going to work on the mutation that relates the subtopics to the threads. Now you can choose a subtopic and add it to a thread. You can't say anything else. We are going
 
