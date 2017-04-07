@@ -122,7 +122,7 @@ The mutation is called "informationRegisterForThread". I like putting the noun b
 
 You can see it expects a required id (ID!) and also an InformationInput object: 
 
-<img src="./images/informationInput.png" width="400">
+<img src="./images/informationInputBefore.png" width="400">
 
 It might seem funny to have a nested InformationInput object nested into those args. Specially because it now contains only one subtopicId field. But, this is a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
 
@@ -160,17 +160,21 @@ So we added the 'about' field. And we also improved docs with 'description' fiel
 
 <img src="./images/informationInputAfter.png" width="400">
 
-Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
+If you click on "about" and "subtopicId", you will be able to read the descriptions added for those fields. Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
 
-So, now we may add a new field, called 'about' to our mutation, inside the information field that is expecting a InformationInput typed data. Since or new field is not mandatory, our app is still running just fine. Try making it required (!) and see our guardian GraphQL layer in action if you wish. 
+So, now we may add a new field, called 'about' to our mutation, inside the information field that is expecting a InformationInput typed data. Since or new field is not mandatory, our app is still running just fine. Try making it required (!) and see our guardian GraphQL layer in action. 
 
-Ok. Now that we created the spec, we can go ahead and write the resolver, right? Ops, not so fast, what about a little TDD? The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
+Schema created! We can go ahead and write the resolver, right? Not so fast ... What about a little TDD? The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
 
-## Write test(s)
+## Write tests
 
-I start with tests run against the GraphQL layer, so they also test the schema. Sometimes I feel it's better to write them first, sometimes I write the scema first. No strict rule on that. Eperience and feeling taking precedence. 
+Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. So I could have written the test before the schema. What is the correct order? 
 
-Well, indeed, we already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
+Sometimes I feel it's better to write them first, sometimes I write the scema first. No strict rule on that. Eperience and feeling taking precedence. 
+
+So, now let's write our test to add the 'about' data in our query and see if it is returned back when we read the thread with it's informations. 
+
+We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
 
 ```php 
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
