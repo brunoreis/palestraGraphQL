@@ -35,15 +35,13 @@ Talking about tests, another decision taken was to run most tests over the API l
 And I'll do my best to guide you through this development process while this study this architecture. 
 
 
-
-
-## How are we going to study the app? 
+## Breadcrumbs
 
 I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. I hope you will like it as much as I do.
 
 After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
 
-## The App we are gonna look at.
+## The App 
 
 The view is usually the easiest part to understand an application domain. So let's do it before we install the backend and look at it's API. 
 
@@ -64,8 +62,7 @@ This App gives us interesting data structures to serve us as an example:
 **These examples are all available on the repository code** and can ilustrate how to handle these data structures on both front and backend. 
 
 
-
-## Install
+## Installation
 
 We will try to put all needed code and images in the article. But, I encourage you to clone the repo anyways, because you can look at all the rest of the code available there. And that will also give you a feeling about code organization. 
 
@@ -83,7 +80,7 @@ TODO: rewrite readme in english to help these steps
 1. Define the functionality
 2. Define the Schema
 3. Write test(s)
-4. Making test pass - Improve schema and resolver
+4. Making test pass - Improving the schema and the resolver
 5. Refactor
 
 
@@ -338,7 +335,7 @@ After that we will load that thread back, query that field's value and compare i
 
 As a good just created test, it will fail! It will say that it could not query the  about field on the response. 
 
-## Making test pass - Improve schema and resolver
+## Making test pass - Improving the schema and the resolver
 
 So let's add it to the THREAD query:   
 
