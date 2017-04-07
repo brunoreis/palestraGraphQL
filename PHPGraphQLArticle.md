@@ -117,7 +117,7 @@ So, let's look at GraphiQL. If you started the server it should be running under
 
 The mutation is called "informationRegisterForThread". I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
 
-![informationRegisterForThread spacs](./images/informationRegisterForThreadBefore.png | width=200)
+<img src="./images/informationRegisterForThreadBefore.png" width="200">
 
 You can see it expects a required id (ID!) and also an InformationInput object: 
 
