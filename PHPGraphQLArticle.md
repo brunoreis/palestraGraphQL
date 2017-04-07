@@ -105,11 +105,12 @@ TODO: rewrite readme in english to help these steps
 
 I usually think visually. I start designing from the frontend. So, our task will be taking this: 
 
-![Tag form before edition](./images/tagFormBefore.png | width=300)
+<img src="./images/tagFormBefore.png" width="600">
 
 And turning into this: 
 
-![Tag form after edition](./images/tagFormAfter.png | width=300)
+<img src="./images/tagFormAfter.png" width="600">
+
 
 To add extra information about the classification (tagging) of a thread in a specific subtopic. 
 
@@ -117,11 +118,11 @@ So, let's look at GraphiQL. If you started the server it should be running under
 
 The mutation is called "informationRegisterForThread". I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
 
-<img src="./images/informationRegisterForThreadBefore.png" width="200">
+<img src="./images/informationRegisterForThreadBefore.png" width="400">
 
 You can see it expects a required id (ID!) and also an InformationInput object: 
 
-![InformationInput spacs](./images/informationInput.png | width=200)
+<img src="./images/informationInput.png" width="400">
 
 It might seem funny to have a nested InformationInput object nested into those args. Specially because it now contains only one subtopicId field. But, this is a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
 
@@ -157,7 +158,7 @@ InformationInput:
 
 So we added the 'about' field. And we also improved docs with 'description' fields. Let's see our docs now: 
 
-![New InformationInput spacs](./images/informationInputAfter.png)
+<img src="./images/informationInputAfter.png" width="400">
 
 Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
 
