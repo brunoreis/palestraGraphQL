@@ -7,15 +7,13 @@ In this article, we will explore the scructure of a GraphQL server built in PHP.
 
 When I was studying to build this app, I felt that there were missing code examples on the community, so I also hope that having code examples to look at will be usefull for your own study. As they say, **a repo is worth a thousand words**!
 
-- [PHP backend with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim)
+- [PHP backend repository](https://gitlab.com/bruno.p.reis/nosso-jardim) with Symfony, Doctrine and Overblog GraphQL
 
 Please, don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" in a so fast evolving technology scenario, especially for GraphQL based libs, since it was released two year ago. But, I sure did a good work researching and finding better ways to do things.
 
 Anyway, please do as you were eating a fish, keep the meat and spit the fishbone. Grab what you feel is useful to you, and please send comments on places you think we can improve.
 
-* BTW, [If you wish, you can also look at the frontend for this App.](https://gitlab.com/bruno.p.reis/nosso-jardim-client))
-
-
+* BTW, If you wish, you can also look at the [frontend](https://gitlab.com/bruno.p.reis/nosso-jardim-client) for this App.
 
 ## Our Roadmap
 
@@ -107,11 +105,11 @@ TODO: rewrite readme in english to help these steps
 
 I usually think visually. I start designing from the frontend. So, our task will be taking this: 
 
-![Tag form before edition](./images/tagFormBefore.png)
+![Tag form before edition](./images/tagFormBefore.png | width=300)
 
 And turning into this: 
 
-![Tag form after edition](./images/tagFormAfter.png)
+![Tag form after edition](./images/tagFormAfter.png | width=300)
 
 To add extra information about the classification (tagging) of a thread in a specific subtopic. 
 
@@ -119,11 +117,11 @@ So, let's look at GraphiQL. If you started the server it should be running under
 
 The mutation is called "informationRegisterForThread". I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
 
-![informationRegisterForThread spacs](./images/informationRegisterForThreadBefore.png)
+![informationRegisterForThread spacs](./images/informationRegisterForThreadBefore.png | width=200)
 
 You can see it expects a required id (ID!) and also an InformationInput object: 
 
-![InformationInput spacs](./images/informationInput.png)
+![InformationInput spacs](./images/informationInput.png | width=200)
 
 It might seem funny to have a nested InformationInput object nested into those args. Specially because it now contains only one subtopicId field. But, this is a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
 
@@ -356,7 +354,7 @@ As every good just created test, it will fail! So, now our job is simple, let's 
             }';
         return $this->runner->processResponse($q,$args,$getError,$initialPath);
     }
-```
+``
 
 
 
