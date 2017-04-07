@@ -1,90 +1,70 @@
 
 # Introduction 
 
-## Who is this article for?
+## Is this for me?
 
-In this article, I will show you how I built **a full stack architecture using PHP, Symfony, Doctrine, GraphQL, ApolloJS and React**. If you are considering to set up an architecture with GraphQL in PHP, I encourage you to read this article because I talk about each component and interaction between them. 
+In this article, we will explore the scructure of a GraphQL server built in PHP. We are going to do it while we look at the development proccess of a new feature. If you are considering to set up a GraphQL server in PHP, you will sure find good references here. The code we are going to explore is an open source App I built with this architecture. 
 
-I also take some time to show how I solved the most pressing challenges I found while integrating these technologies. 
-
-The code we are going to explore is an open source App built with this architecture. When I was studying, I felt that there were missing code examples on the community, so **I hope that the repositories we are using will be usefull to your own study**.
-
-Here they are: 
+When I was studying to build this app, I felt that there were missing code examples on the community, so I also hope that having code examples to look at will be usefull for your own study. As they say, **a repo is worth a thousand words**!
 
 - [PHP backend with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim)
 
-- [JS frontend with Apollo Client, React Apollo, React and Semantic UI React](https://gitlab.com/bruno.p.reis/nosso-jardim-client)
+Please, don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" in a so fast evolving technology scenario, especially for GraphQL based libs, since it was released two year ago. But, I sure did a good work researching and finding better ways to do things.
 
-As they say, **a repo is worth a thousand words**!
+Anyway, please do as you were eating a fish, keep the meat and spit the fishbone. Grab what you feel is useful to you, and please send comments on places you think we can improve.
 
-Don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" in a so fast evolving technology scenario, especially for GraphQL based libs, since it was released two year ago. 
+* BTW, [If you wish, you can also look at the frontend for this App.](https://gitlab.com/bruno.p.reis/nosso-jardim-client))
 
-So please do as you were eating a fish, keep the meat and spit the fishbone.  
+
+
+## Our Roadmap
+
+    Driving Forces 
+    How are we going to study the app?
+    Installation
+    The App we are gonna look at
+    The API Schema
+    Overblog GraphQL - The lib we are using
+    The Schema Declaration - The entrance to the backend
+    Following a complete backend query
+    A little Recap
+    Cors
+    Error Handling
+    Testing your code
+
+
 
 ## Driving Forces
 
 Please, allow me a more abstract and high level talk before getting into the code. 
 
-React is a very nice frontend technology and has some paradigm shifts for a frontend tech. **It's beauty lies in the fact that you always have a predictable view for a specific model state.** The hadaches with a lot of binds and listeneres are mostly gone and the code is a lot more clean and therefore maintainable. 
+I was studying Apollo Client to integrate data into frontend. And, to use Apollo, I had to learn [GraphQL](http://graphql.org/learn/) because Apollo is built to be backed by a GraphQL server. 
 
-Talking in other terms, a React frontend is a pure function where you pass a model and get a view. Together with Redux, that has a similar approach for state management, they make a very cool tool for the frontend apps, but something was missing.  
+I usually use PHP and Symfony on the backend, so that was my natural choice. I confess got a little inclined to work with the JS implementation at first, but experience has teached me that adding too much new stuff to a new project is never such a good idea. 
 
-**The R & R couple (React and Redux) still lack a good way to integrate with assynchronous data**. So, I started a quest on what to use there. I researched a lot of redux patterns and libs to do this job, but they all seemed to require to much to do the job. 
+So I went in a quest to see if I could find good libs in PHP to help on the job. And, lucky me, thanks fot these both projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I found mature libs that do their job in a excelent manner. 
 
-Looking for solutions, I was hearing a lot of buzz about Relay, and I decided to give it a try. Specially because I like the facebook policy of releasing code they actually use. So I started studying relay.  
+I started using Youshido's lib and later migrated to Webonyx, more especifically to it's [Overblog's version](https://github.com/overblog/GraphQLBundle). With that nice GraphQL server layer in place, I tested a lot of layer compositions and code organizations to find a balanced and clean one. 
 
-Relay docs were too cryptic to me and I gave up on it on my first try. A little later, I met Apollo, backed by the meteor guys. I found they had a better documentation and community, so I decided to give it a try.
+After a lot of refining, I was then able to come up with a simple way to structure the app, putting most of my focus on the business. This structure looks even better to me than working with controllers and routes. And that was fantastic on my opinion. I was looking for a GraphQL server with the only purpose to serve the frontend, but found a lot more. A good code structure, easily testable, and very well documented by default. 
 
-I started my first app using a GraphQL client. Using it **I discovered that Apollo was able to do a lot more than just fetching data from the server. It's cache layer is very well managed, it is able to normalize and denormalize data into there, it can manage subscriptions and also can agregate queries to save requests.**  
+Talking about tests, another decision taken was to run most tests over the API layer, what also proved to be a very good decision. In fact, my working proccess of a new feature now allways starts from the schema and tests on that schema. 
 
-Using it I was able to mantain a very nice and organised codebase, backed by a very powerfull tool to integrate assynchronous data with my view. **To me, the declarative way of composing the views with HOCs wrapping the views fitted like a glove in my hands.**
-
-To use Apollo, I had to learn **GraphQL, that is a superb language and technology to expose and query an API**. Created inside Facebook and used into real life hard core projects in an intensive way before being released, GraphQL really improves a lot of things over old rest communication. ( Don't take me for granted. [Take a look here.](http://graphql.org/learn/)
-
-I'm already a **PHP/Symfony** developer for a long time, so that was my choice for backend. I confess I was very inclined to work with the JS implementation at first, but adding too much new stuff to a new project is never good in my experience. 
-
-I found mature libs in PHP and the app organization, after a lot of refining, came out to be very good and clean in the backend too. Indeed, **GraphQL helped me a lot on that Backend organisation.** 
-
-Another decision taken was running most tests over the API layer, what also proved to be a very good decision. I like a lot **TDD**, but finding the correct amount of tests to move fast and also finding the correct layer to test is a fine art to me. 
-
-Well, this stuff is hard to talk about, so please take a look at the code([1](https://gitlab.com/bruno.p.reis/nosso-jardim)[2](https://gitlab.com/bruno.p.reis/nosso-jardim-client)) to get an overall feeling befor we start. Or, if you are not in a mood, just follow along.
-
-## Our Roadmap
-
-    Introduction
-        Who is this article for?
-        Driving Forces
-        Our Roadmap (<-you are here)
-    Backend
-        The App we are gonna look at
-        Installation
-        The API Schema
-        Overblog GraphQL
-        The Schema Declaration - The entrance to the backend
-        Following a complete backend query
-        A little Recap
-        Cors
-        Error Handling
-        Testing your code
-    Frontend
-        Installing the frontend
-        Overview
-        Our next destination: MessageStatus View Component
-        Integrating data with containers
-        Diving deepen into the PEERS query
-        Integration between Apollo containers and also Redux
-        Verification Point
+And I'll do my best to guide you through this development process while this study this architecture. 
 
 
-# Backend
 
-On the backend side, we are going to explore a [PHP backend with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim) 
+## How are we going to study the app? 
+
+I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. I hope you will like it as much as I do.
+
+After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
 
 ## The App we are gonna look at.
 
 The view is usually the easiest part to understand an application domain. So let's do it before we install the backend and look at it's API. 
 
-We are gonna work on a **Knowledge Management App**. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
+We are gonna work on a Knowledge Management App. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
 
 The mais screen, as shown below, is where you organize messages in specific threads or conversations (Conversas in Brazilian Portuguese) and put tags on those threads. 
 
@@ -100,27 +80,302 @@ This App gives us interesting data structures to serve us as an example:
 
 **These examples are all available on the repository code** and can ilustrate how to handle these data structures on both front and backend. 
 
-Ok, now that you understand what we will be working on, you might want to grab the backend code.
+
 
 ## Installation
+
+We will try to put all needed code and images in the article. But, I encourage you to clone the repo anyways, because you can look at all the rest of the code available there. And that will also give you a feeling about code organization. 
 
 1. [Clone the backend repo.](https://gitlab.com/bruno.p.reis/nosso-jardim)
 2. Run composer install and configure your parameters
 3. Import Fixtures and Data
-4. Start the php server
+4. Start the PHP server
 5. Read the next section so that you can look at GraphiQL knowing the app
 
+TODO: rewrite readme in english to help these steps
 
-## The API Schema
 
-You can run [queries](https://dev-blog.apollodata.com/the-anatomy-of-a-graphql-query-6dffa9e9e747) using GraphiQL and see the results right there, with the docs on the right where you can check for the types and formats. 
+# The development cycle
 
-![Running Queries](./images/runningQueries.gif)
-![Looking at the Documentation](./images/documentation.gif)
+1. Define the Schema
+2. Write test(s)
+3. Write resolvers
+4. Refactor
+5. [Optimize]
 
-Go ahead, take some time now, navigate through GraphiQL and look at the schema and queries available to understand our domain. I should be under /graphiql in the address your php server is runnig. Probably on 127.0.0.1:8000/graphiql
+## Defining the Schema
 
-## Overblog GraphQL
+I usually think visually. I start designing from the frontend. So, our task will be taking this: 
+
+![Tag form before edition](./images/tagFormBefore.png)
+
+And turning into this: 
+
+![Tag form after edition](./images/tagFormAfter.png)
+
+To add extra information about the classification (tagging) of a thread in a specific subtopic. 
+
+So, let's look at GraphiQL. If you started the server it should be running under 127.0.0.1:8000/graphiql or any similar location. We will look more specifically on the mutation that is used to insert an information. An information is the relationship between a thread and a subtopic. You can understand it as a tag also. 
+
+The mutation is called "informationRegisterForThread". I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
+
+![informationRegisterForThread spacs](./images/informationRegisterForThreadBefore.png)
+
+You can see it expects a required id (ID!) and also an InformationInput object: 
+
+![InformationInput spacs](./images/informationInput.png)
+
+It might seem funny to have a nested InformationInput object nested into those args. Specially because it now contains only one subtopicId field. But, this is a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
+
+And this will help us now, because we will add our text field data to that object, so start changing our schema: 
+
+```json
+#InformationInput.types.yml
+
+# from ...
+
+InformationInput:
+    type: input-object
+    config:
+        fields:
+            subtopicId:
+                type: "ID!"
+
+# to ...
+
+InformationInput:
+    type: input-object
+    config:
+        description: "This represents the information added to classify or tag a thread"
+        fields:
+            about:
+                type: "String"
+                description: 'Extra information beyond the subtopic'
+            subtopicId:
+                type: "ID!"
+                description: 'The subtopic that represents where in the knowledge tree we classify the thread.'
+
+```
+
+So we added the 'about' field. And we also improved docs with 'description' fields. Let's see our docs now: 
+
+![New InformationInput spacs](./images/informationInputAfter.png)
+
+Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
+
+So, now we may add a new field, called 'about' to our mutation, inside the information field that is expecting a InformationInput typed data. Since or new field is not mandatory, our app is still running just fine. Try making it required (!) and see our guardian GraphQL layer in action if you wish. 
+
+Ok. Now that we created the spec, we can go ahead and write the resolver, right? Ops, not so fast, what about a little TDD? The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
+
+## Write test(s)
+
+I start with tests run against the GraphQL layer, so they also test the schema. Sometimes I feel it's better to write them first, sometimes I write the scema first. No strict rule on that. Eperience and feeling taking precedence. 
+
+Well, indeed, we already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
+
+```php 
+    # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
+
+    function helper() {
+        return new InformationTestHelper($this);
+    }
+
+    /** @test */
+    public function shouldSaveSubtopicId()
+    {
+        $h = $this->helper();
+
+        $s1 = $h->SUBTOPICS_REGISTER_FIRST_LEVEL(['name'=>"Planta"])('0.subtopics.0.id');
+        $s2 = $h->SUBTOPICS_REGISTER_FIRST_LEVEL(['name'=>"Construcao"])('0.subtopics.1.id');
+
+        $t1 = $h->createThread();
+        $t2 = $h->createThread();
+        $t3 = $h->createThread();
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>['subtopicId'=>$s1]
+        ]);
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>['subtopicId'=>$s2]
+        ]);
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t3,
+                'information'=>['subtopicId'=>$s2]
+        ]);
+
+        $informations = $h->THREAD(['id'=>$t1])('thread.informations');
+
+        $this->assertCount(2,$informations);
+        $this->assertEquals($s1,$informations[0]['subtopic']['id']);
+        $this->assertEquals($s2,$informations[1]['subtopic']['id']);
+        
+        $informations = $h->THREAD(['id'=>$t2])('thread.informations');
+        $this->assertCount(0,$informations);
+
+        $informations = $h->THREAD(['id'=>$t3])('thread.informations');
+        $this->assertCount(1,$informations);
+
+        $this->assertEquals($s2,$informations[0]['subtopic']['id']);
+    }
+*/ 
+
+The helper (InformationTestHelper) is responsible by calling the queries on the GraphQL layer and return a function. That function is then called with a json path to grab what we need. This pattern may seem a little tricky at first, but it pays the cost with the clarity we get from it. 
+
+Let's refactor a little and you will see what I'm talking about: 
+
+
+```php
+/** @test */
+    
+    function createThreadsAndSubtopics() {
+        $h = $this->helper();
+
+        $s1 = $h->SUBTOPICS_REGISTER_FIRST_LEVEL(['name'=>"Planta"])('0.subtopics.0.id');
+        $s2 = $h->SUBTOPICS_REGISTER_FIRST_LEVEL(['name'=>"Construcao"])('0.subtopics.1.id');
+
+        $t1 = $h->createThread();
+        $t2 = $h->createThread();
+        $t3 = $h->createThread();
+
+        return [$s1,$s2,$t1,$t2,$t3];
+    }
+
+    public function shouldSaveSubtopicId()
+    {
+        $h = $this->helper();
+
+        list($s1,$s2,$t1,$t2,$t3) = $this->createThreadsAndSubtopics();
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>['subtopicId'=>$s1]
+        ]);
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>['subtopicId'=>$s2]
+        ]);
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t3,
+                'information'=>['subtopicId'=>$s2]
+        ]);
+
+        list(
+            $informations,
+            $s1ReadId,
+            $s2ReadId
+        ) = $h->THREAD([
+            'id'=>$t1
+        ])(
+            'thread.informations',
+            'thread.informations.0.subtopic.id',
+            'thread.informations.1.subtopic.id'
+        );
+
+        $this->assertCount( 2 , $informations );
+        $this->assertEquals( $s1 , $s1ReadId );
+        $this->assertEquals( $s2 , $s2ReadId );
+        
+        
+        $this->assertCount(
+            0,
+            $h->THREAD(['id'=>$t2])('thread.informations')
+        );
+
+        $informations = $h->THREAD(['id'=>$t3])('thread.informations');
+        $this->assertCount(1,$informations);
+
+        $this->assertEquals($s2,$informations[0]['subtopic']['id']);
+    }
+```
+
+So this:
+```
+$informations[1]['subtopic']['id']
+```
+
+Now is returned as '$s2ReadId' in response to the query 'thread.informations.1.subtopic.id' that was made through JsonPath into the response that came fron the GraphQL layer. 
+
+BTW, to run the test, I'm needing to clear the cache everytime. I think it's a small bug on the code generation from yml schema, later I will take a closer look and report if I find somethig. Meanwhile, please use this to run your tests: bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
+
+Well, let's do our job and test for the new field we are adding: 
+
+```php
+    # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
+
+    /** @test */
+    public function shouldSaveAbout()
+    {
+        $h = $this->helper();
+
+        list($s1,$s2,$t1) = $this->createThreadsAndSubtopics();
+
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>[
+                    'subtopicId'=>$s1,
+                    'about'=>'Nice information about that thing.'
+                ]
+        ]);
+
+        $savedText = $h->THREAD(['id'=>$t1])(
+            'thread.informations.0.about'
+        );
+
+        $this->assertCount( 2 , $informations );
+        $this->assertEquals( 'Nice information about that thing.' , $savedText );
+    }
+```
+
+As every good just created test, it will fail! So, now our job is simple, let's make it pass. First I'll add the about to the query being issued (THREAD):
+
+```php 
+    # Tests\AppBundle\GraphQL\TestHelper.php
+
+    function THREAD($args = [],$getError = false, $initialPath = '') {
+        $q ='query thread($id:ID!){
+                thread(id:$id){
+                    id
+                    messages{
+                        id
+                        text
+                    }
+                    informations{
+                        id
+                        about # <-- ADDED THIS FIELD
+                        subtopic{
+                            id
+                        }
+                    }
+                }
+            }';
+        return $this->runner->processResponse($q,$args,$getError,$initialPath);
+    }
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Defining our 
+
+## Overblog GraphQL - The lib we are using
 
 To build the GraphQL server over symfony, we are using the overblog/GraphQLBundle lib. (https://github.com/overblog/GraphQLBundle) 
 
@@ -132,12 +387,15 @@ As you can see on it's [requirements|https://github.com/overblog/GraphQLBundle/b
 
 	2 - webonyx/graphql-php - This is the real engine of our car. A PHP port of GraphQL reference implementation. Very stable and ready to use. Please take a look at the docs and I call special attention to the 
 
+
 ## The Schema Declaration - The entrance to the backend
 
 Our schema declaration is under src/AppBundle/Resources/config/graphql/
-Queries are defined in the Query.types.yml. The fields there are the system queries, possible args are defined there and the resolvers are also set there. 
+Queries are defined in the Query.types.yml and mutations on Mutations.types.yml. 
 
-So we can understand that this file is the entrance on our system. It defines the API interface with the outter word. 
+The resolvers are nicely defined there with the expession language we've talked about. You should know that, to fulfill a request, more than one resolver can be called down in the scema tree. 
+
+This file is the entrance on our system. It defines the API interface with the outter word. 
 
 ## Following a complete backend query
 
@@ -365,6 +623,13 @@ Let's take a look at a complete test. Comments are on the code to help your unde
 	    $this->assertEquals('sub2',$name);
 	}
 ```
+
+
+
+
+
+
+
 
 To run tests without errors, I need to clean the cache. I've not inspected the reasons on that yet, but it feels like a bug on the generation of the cached graphql types. Anyway, I just use a command like this everytime: 
 
