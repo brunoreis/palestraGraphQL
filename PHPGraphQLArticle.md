@@ -1,6 +1,8 @@
 # Diving into a PHP GraphQL Server. 
 
-## Is this for me?
+# Introduction
+
+### Is this for me?
 
 In this article, we will show the development of a new feature in a GraphQL server built in PHP. If you are considering to set up a GraphQL server in PHP, you will sure find good references here. In the end of this article, I try to explain the points I felt were missing on the first narrative so that you can set up your own server from scrach. 
 
@@ -16,7 +18,7 @@ Anyway, please do as you were eating a fish, keep the meat and spit the fishbone
 
 * BTW, If you wish, you can also look at the [frontend](https://gitlab.com/bruno.p.reis/nosso-jardim-client) for this App.
 
-## Decisions taken
+### Decisions taken
 
 Please, allow me a more abstract and high level talk before getting into the code. 
 
@@ -35,13 +37,13 @@ Talking about tests, another decision taken was to run most tests over the API l
 And I'll do my best to guide you through this development process while this study this architecture. 
 
 
-## Breadcrumbs
+### Breadcrumbs
 
 I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. I hope you will like it as much as I do.
 
 After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
 
-## The App 
+### The App 
 
 The view is usually the easiest part to understand an application domain. So let's do it before we install the backend and look at it's API. 
 
@@ -62,7 +64,7 @@ This App gives us interesting data structures to serve us as an example:
 **These examples are all available on the repository code** and can ilustrate how to handle these data structures on both front and backend. 
 
 
-## Installation
+### Installation
 
 We will try to put all needed code and images in the article. But, I encourage you to clone the repo anyways, because you can look at all the rest of the code available there. And that will also give you a feeling about code organization. 
 
@@ -75,7 +77,7 @@ We will try to put all needed code and images in the article. But, I encourage y
 TODO: rewrite readme in english to help these steps
 
 
-# The Development Cycle
+## The Development Cycle
 
 1. Define the functionality
 2. Define the Schema
@@ -84,7 +86,7 @@ TODO: rewrite readme in english to help these steps
 5. Refactor
 
 
-## Defining the Schema
+### Defining the Schema
 
 I usually think visually. I start designing from the frontend. So, our task will be taking this: 
 
@@ -149,7 +151,7 @@ So, now we may add a new field, called 'about' to our mutation, inside the infor
 
 Schema created! We can go ahead and write the resolver, right? Not so fast ... What about a little TDD? The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
 
-## Write tests
+### Writing tests
 
 Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. So I could have written the test before the schema. What is the correct order? 
 
@@ -335,7 +337,7 @@ After that we will load that thread back, query that field's value and compare i
 
 As a good just created test, it will fail! It will say that it could not query the  about field on the response. 
 
-## Making test pass - Improving the schema and the resolver
+### Making test pass - Improving the schema and the resolver
 
 So let's add it to the THREAD query:   
 
@@ -425,9 +427,9 @@ And then, we get the very wanted green message we were waiting for passing the t
 > I encourage you to open SubtopicsTestHelper and follow and understand the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). 
 > There you will be able to see the GraphQL call happening and the json path component being wrapped in the returning funcion. 
 
-# Refactor
+### Refactor
 
-### Observe
+#### Observe
 
 Having our green lights on, it's time for some retrospective on what we've done so far. Going to a higher to a lower level, lets talk first about the proccess. 
 
@@ -453,7 +455,7 @@ It might seem as too many steps for some people, but to me they are very nice st
 4. Implement the logic
 5. Implement the persistence
 
-### Improve 
+#### Improve 
 
 So, to honor the refactor step, looking at the code, is there anything that can be improved? Well, there is allway something. But, we should allways start from the lower hanging ones, right? 
 
@@ -496,13 +498,13 @@ Such a field could help us saving a request to grab this extra information and k
 
 Long life to GraphQL!
 
-# Putting the pieces together. 
+## Putting the pieces together. 
 
 In the last Section, "The Development Cycle", we understood (I hope ;-)) how this architecture works in a dynamical way. 
 
 In this section I'll tell some extra details about specific libs and configurations I fell are important to finalise our job here. What job? Transmitting to you this architecture and enabling you to know what each part is for, how it serves the whole and giving you a way to judge if you need it or not. 
 
-## Overblog GraphQL 
+### Overblog GraphQL 
 
 To build the GraphQL server over symfony, we are using the Overblog GraphQL [Bundle](https://github.com/overblog/GraphQLBundle).
 
@@ -523,7 +525,7 @@ As you can see on it's [requirements](https://github.com/overblog/GraphQLBundle/
 
 	2 - webonyx/graphql-php - This is the real engine of our car. A PHP port of GraphQL reference implementation. Very stable and ready to use. Please take a look at the docs and I call special attention to the 
 
-## The Schema Declaration - The entrance to the backend
+### The Schema Declaration - The entrance to the backend
 
 Our schema declaration is under src/AppBundle/Resources/config/graphql/
 Queries are defined in the Query.types.yml and mutations on Mutations.types.yml. 
@@ -532,7 +534,7 @@ The resolvers are nicely defined there with the expession language we've talked 
 
 This file is the entrance on our system. It defines the API interface with the outter word. 
 
-## Cors
+### Cors
 
 This app is not on a prod server yet, but I intend to keep the server in a different env, so I installed the [NelmioCorsBundle|https://github.com/nelmio/NelmioCorsBundle]
 
@@ -542,7 +544,7 @@ It's also worth noticing that I had to add 'content-type' as an allowed header i
 
 If you don't know this bundle yet, it's worth taking a look at it. It will manage the headers sent and specially the OPTIONS pre-flight requests to enable cross origin resource sharing. In other words, will enable you to call your API from a different domain.
 
-## Error Handling
+### Error Handling
 
 Error handling is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. And, as we can see by the community, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
 
@@ -573,7 +575,7 @@ I encourage you to test sending a non existent id to that query with debug==true
 
 Exceptions are also logged on dev.log.  
 
-## Final Considerations
+### Final Considerations
 
 I'm glad you made it. I know this article is larger than usual. I had so many insights and sgruggles to put this all together that, in fact, I had to cut a lot of paragraphs and content to make this. 
 
