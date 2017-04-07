@@ -97,7 +97,7 @@ TODO: rewrite readme in english to help these steps
 
 1. Define the Schema
 2. Write test(s)
-3. Write resolvers
+3. Making test pass - Improve schema and resolver
 4. Refactor
 5. [Optimize]
 
@@ -320,7 +320,9 @@ BTW, to run the test, I'm needing to clear the cache everytime. I think it's a s
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
 ```
 
-Well, let's do our job and test for the new field we are adding: 
+Well, let's do our job and test for the new field we are adding. Let's make it simpler, we will register an information adding data in the 'about' field, that is nested inside the 'information' field. 
+
+After that we will load that thread back, query that field's value and compare it against the original string to check it worked. 
 
 ```php
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
@@ -334,22 +336,25 @@ Well, let's do our job and test for the new field we are adding:
 
         $h->INFORMATION_REGISTER_FOR_THREAD([
                 'threadId'=>$t1,
-                'information'=>[
+                'information'=>[ # information field
                     'subtopicId'=>$s1,
-                    'about'=>'Nice information about that thing.'
+                    'about'=>'Nice information about that thing.' # about field
                 ]
         ]);
 
-        $savedText = $h->THREAD(['id'=>$t1])(
-            'thread.informations.0.about'
+        $savedText = $h->THREAD(['id'=>$t1])( # query for the thread
+            'thread.informations.0.about' # query the result for that field
         );
 
-        $this->assertCount( 2 , $informations );
-        $this->assertEquals( 'Nice information about that thing.' , $savedText );
+        $this->assertEquals( 'Nice information about that thing.' , $savedText ); # check it 
     }
 ```
 
-As every good just created test, it will fail! So, now our job is simple, let's make it pass. First I'll add the about to the query being issued (THREAD):
+As a good just created test, it will fail! It will say that it could not query the  about field on the response. 
+
+## Making test pass - Improve schema and resolver
+
+So let's add it to the THREAD query:   
 
 ```php 
     # Tests\AppBundle\GraphQL\TestHelper.php
@@ -374,6 +379,66 @@ As every good just created test, it will fail! So, now our job is simple, let's 
         return $this->runner->processResponse($q,$args,$getError,$initialPath);
     }
 ```
+
+Doing so, I get this error: 
+
+```
+    [message] => Cannot query field "about" on type "Information".
+```
+
+And that's correct. We added 'about' to the InformationInput type. Now we need to add it to the Information.types.yml:
+
+```yml
+#Information.types.yml
+            about:
+                type: "String"
+                description: "extra information" 
+```
+
+With that in place, we now get a: 
+
+```
+Failed asserting that null matches expected 'Nice information about that thing.'
+```
+
+So, we can understand GraphQL is ok and the fun is now on the resolvers. Why? Because about is being received as a correct and validated field, and able to be queried. It's not returned yet because we did not add it to our data layer. 
+
+In order to complete our mission, we need to 
+
+1. save it when the mutation is received and 
+2. read it on the THREAD query. That is normally handled by doctrine for us.  
+
+```php
+# 1 - AppBundle\Resolver\InformationsResolver
+
+    public function registerForThread($args)
+    {
+        $thread = $this->repo('AppBundle:Thread')->find( $args['threadId'] );
+        $subtopic = $this->repo('AppBundle:Subtopic')->find( $args['information']['subtopicId'] );
+        $about = $args['information']['about'];
+        $info = new Information();
+        $info->setSubtopic($subtopic);
+        $info->setAbout($about);
+        $thread->addInformation($info);
+        $this->em->persist($info);
+        $this->em->flush();
+        $this->em->refresh($thread);
+        return $thread;
+    }
+```
+
+That should do the trick. But, we still need something. Let's add the field to our model: 
+
+```
+Error: Call to undefined method AppBundle\Entity\Information::setAbout()
+...
+@ORM\Column(name="about", type="text", nullable=true)
+...
+bin/console doctrine:schema:update --force
+```
+
+And then, we get the very wanted green message we were waiting for passing the test.
+
 
 
 
