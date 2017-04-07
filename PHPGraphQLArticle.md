@@ -225,6 +225,7 @@ We already have a test in place for that Mutation. Let's look at it to align our
         $this->assertEquals($s2,$informations[0]['subtopic']['id']);
     }
 */ 
+``
 
 The helper (InformationTestHelper) is responsible by calling the queries on the GraphQL layer and return a function. That function is then called with a json path to grab what we need. This pattern may seem a little tricky at first, but it pays the cost with the clarity we get from it. 
 
@@ -298,11 +299,19 @@ Let's refactor a little and you will see what I'm talking about:
 ```
 
 So this:
-```
+```php
 $informations[1]['subtopic']['id']
 ```
 
-Now is returned as '$s2ReadId' in response to the query 'thread.informations.1.subtopic.id' that was made through JsonPath into the response that came fron the GraphQL layer. 
+Now is returned as 
+```php
+$s2ReadId
+```
+in response to the query 
+```php
+'thread.informations.1.subtopic.id'
+``` 
+that was made through JsonPath into the response that came fron the GraphQL layer. 
 
 BTW, to run the test, I'm needing to clear the cache everytime. I think it's a small bug on the code generation from yml schema, later I will take a closer look and report if I find somethig. Meanwhile, please use this to run your tests: bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
 
