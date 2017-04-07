@@ -315,6 +315,7 @@ that was made through JsonPath into the response that came fron the GraphQL laye
 
 BTW, to run the test, I'm needing to clear the cache everytime. I think it's a small bug on the code generation from yml schema, later I will take a closer look and report if I find somethig. Meanwhile, please use this to run your tests: 
 
+
 ```
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
 ```
