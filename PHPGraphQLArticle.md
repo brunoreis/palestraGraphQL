@@ -1,8 +1,10 @@
-# Introduction 
+# Diving into a PHP GraphQL Server. 
 
 ## Is this for me?
 
-In this article, we will explore the scructure of a GraphQL server built in PHP. We are going to do it while we look at the development proccess of a new feature. If you are considering to set up a GraphQL server in PHP, you will sure find good references here. The code we are going to explore is an open source App I built with this architecture. 
+In this article, we will show the development of a new feature in a GraphQL server built in PHP. If you are considering to set up a GraphQL server in PHP, you will sure find good references here. In the end of this article, I try to explain the points I felt were missing on the first narrative so that you can set up your own server from scrach. 
+
+The code we are going to explore is an open source App I built with this architecture. 
 
 When I was studying to build this app, I felt that there were missing code examples on the community, so I also hope that having code examples to look at will be usefull for your own study. As they say, **a repo is worth a thousand words**!
 
