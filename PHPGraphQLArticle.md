@@ -101,7 +101,7 @@ And turning into this:
 
 So  we are goint to add extra information about the classification (tagging) of a thread in a specific subtopic. 
 
-So, let's look at GraphiQL. GraphiQL is a tool where you can see the documentation of a GraphQL server and also run queries and mutations in it. If you started the server it should be running under 127.0.0.1:8000/graphiql or any similar location. 
+Let's look at GraphiQL. GraphiQL is a tool where you can see the documentation of a GraphQL server and also run queries and mutations in it. If you started the server it should be running under 127.0.0.1:8000/graphiql or any similar location. 
 
 Let's see the mutation that is used to insert an Information. Information is an entity in our system. It's the relationship between a Thread and a Subtopic. You can also understand it as a tag. 
 
@@ -113,7 +113,7 @@ You can see it expects a required id (ID!) and also an InformationInput object. 
 
 <img src="./images/informationInputBefore.png" width="400">
 
-BTW, I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
+> BTW, I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
 
 It might seem funny or unnecessary to have a nested InformationInput object into those args. Specially because it now contains only one subtopicId field. This is, indeed, a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
 
@@ -165,9 +165,13 @@ The scema is easily visible on the frontend and I feel it's ok to write it witho
 
 Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. 
 
-So, now let's write our test to add the 'about' data in our query and see if it is returned back when we read the thread with it's informations. 
+To run the test, I'm needing to clear the cache everytime. I think it's a small bug on the code generation from yml schema, later I will take a closer look and report if I find somethig. Meanwhile, please use this to run your tests: 
 
-We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
+```
+bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
+```
+
+Let's write our test to add the 'about' data in our query and see if it is returned back when we read the thread with it's informations. We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
 
 ```php 
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
@@ -305,13 +309,6 @@ in response to the query
 'thread.informations.1.subtopic.id'
 ``` 
 that was made through JsonPath into the response that came fron the GraphQL layer. 
-
-BTW, to run the test, I'm needing to clear the cache everytime. I think it's a small bug on the code generation from yml schema, later I will take a closer look and report if I find somethig. Meanwhile, please use this to run your tests: 
-
-
-```
-bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
-```
 
 Well, let's do our job and test for the new field we are adding. Let's make it simpler, we will register an information adding data in the 'about' field, that is nested inside the 'information' field. 
 
