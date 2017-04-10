@@ -4,40 +4,45 @@
 
 ### Is this for me?
 
-In this article, we will show the development of a new feature in a GraphQL server built in PHP. If you are considering to set up a GraphQL server in PHP, you will sure find good references here. In the end of this article, I try to explain the points I felt were missing on the first narrative so that you can set up your own server from scrach. 
+In this article, we will show the development of a new feature in a GraphQL server built in PHP. Our goal is to explore the architecture used on the PHP server by adding a small functionality to the application. 
 
-The code we are going to explore is an open source App I built with this architecture. 
+If you are considering to set up a GraphQL server in PHP, you will sure find a good example here. When I was studying to build this app, I felt that there were missing code examples on the community, especially in PHP.
 
-When I was studying to build this app, I felt that there were missing code examples on the community, so I also hope that having code examples to look at will be usefull for your own study. As they say, **a repo is worth a thousand words**!
+It's worth noticing the code we are going to explore is open sourced and you can also use it as your own foundation. In there you have a lot of code examples to look that might be usefull for your own study. 
+
+As they say, **a repo is worth a thousand words**!
 
 - [PHP backend repository](https://gitlab.com/bruno.p.reis/nosso-jardim) with Symfony, Doctrine and Overblog GraphQL
 
-Please, don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" in a so fast evolving technology scenario, especially for GraphQL based libs, since it was released two year ago. But, I sure did a good work researching and finding better ways to do things.
+Don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" in a so fast evolving technology scenario, especially for GraphQL based libs, since it was released two year ago. But, I sure did a good work researching and finding better ways to do things.
 
-Anyway, please do as you were eating a fish, keep the meat and spit the fishbone. Grab what you feel is useful to you, and please send comments on places you think we can improve.
-
-* BTW, If you wish, you can also look at the [frontend](https://gitlab.com/bruno.p.reis/nosso-jardim-client) for this App.
+* BTW, the client application is also open sourced [here](https://gitlab.com/bruno.p.reis/nosso-jardim-client).
 
 ### Decisions taken
 
-Please, allow me a more abstract and high level talk before getting into the code. 
+Please, allow me an overview before getting into the code. 
 
-I was studying Apollo Client to integrate data into frontend. And, to use Apollo, I had to learn [GraphQL](http://graphql.org/learn/) because Apollo is built to be backed by a GraphQL server. 
+I was studying Apollo Client to integrate data into my React Frontend. Apollo is a very recent technology, build by the Meteor Development Group. It's a client for JS applications. In my specific case, for a React application. 
 
-I usually use PHP and Symfony on the backend, so that was my natural choice. I confess got a little inclined to work with the JS implementation at first, but experience has teached me that adding too much new stuff to a new project is never such a good idea. 
+React and Redux make a great pair for frontend development, but there is a fundamental missing point, not in their scope, that is the data integration with server. To be more specific, the assynchronous integration. 
+
+And that is where Apollo rules. It has a great set of tools like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more. You can [check it out on their site](http://dev.apollodata.com/) if you wish. 
+
+And, to use Apollo, I had to learn [GraphQL](http://graphql.org/learn/) because Apollo is built to be backed by a GraphQL server. 
+
+I usually use PHP and Symfony on the backend, so that was my natural choice. 
 
 So I went in a quest to see if I could find good libs in PHP to help on the job. And, lucky me, thanks fot these both projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I found mature libs that do their job in a excelent manner. 
 
-I started using Youshido's lib and later migrated to Webonyx, more especifically to it's [Overblog's version](https://github.com/overblog/GraphQLBundle). With that nice GraphQL server layer in place, I tested a lot of layer compositions and code organizations to find a balanced and clean one. 
+I started using Youshido's lib and later migrated to Webonyx. To integrate with symfony, I used the [OverblogGraphQLBundle](https://github.com/overblog/GraphQLBundle). Having that GraphQL server layer in place, meanwhile I was evolving with the app, I tried a lot of layer compositions and code organizations to find a balanced and clean one. 
 
-After a lot of refining, I was then able to come up with a simple way to structure the app, putting most of my focus on the business. This structure looks even better to me than working with controllers and routes. And that was fantastic on my opinion. I was looking for a GraphQL server with the only purpose to serve the frontend, but found a lot more. A good code structure, easily testable, and very well documented by default. 
+After a lot of refining, I was then able to come up with a simple way to structure the app, putting most of my focus on the business. This structure looks even better to me than tradicional ones with controllers and routes. 
 
-Talking about tests, another decision taken was to run most tests over the API layer, what also proved to be a very good decision. In fact, my working proccess of a new feature now allways starts from the schema and tests on that schema. 
+And that was a fantastic bonus to me. I was looking for a GraphQL server with the only purpose to serve the frontend, but found a lot more. A good code structure, easily testable, and very well documented by default. 
 
-And I'll do my best to guide you through this development process while this study this architecture. 
+Talking about tests, another decision taken was to run most tests over the API layer, what also proved to be a very good decision. In fact, my working proccess of a new feature now allways starts from the schema going to the tests on the top of that schema. Those are the beginning step prior to actual implementation of the features.  
 
-
-### Breadcrumbs
+I'll do my best to guide you through this development process along this post. 
 
 I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. I hope you will like it as much as I do.
 
@@ -49,7 +54,7 @@ The view is usually the easiest part to understand an application domain. So let
 
 We are gonna work on a Knowledge Management App. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
 
-The mais screen, as shown below, is where you organize messages in specific threads or conversations (Conversas in Brazilian Portuguese) and put tags on those threads. 
+The mais screen, as shown below, is where you organize messages in specific threads or conversations and put tags on those threads. 
 
 ![Create a Thread and Tag it!](./images/createThread.gif)
 
