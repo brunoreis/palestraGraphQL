@@ -28,13 +28,15 @@ React and Redux make a great pair for frontend development, but there is a funda
 
 #### Apollo
 
-And that is where Apollo rules. It has a great set of tools like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more. You can [check it out on their site](http://dev.apollodata.com/) if you wish.
+And that is where the GraphQL client [Apollo](http://dev.apollodata.com/) rules. It has a great set of tools like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more.
 
-So, Apollo does the dirty work of making assynchronous queries to the server, normalizing the data received and saving it in the cache. It also rebuild that data graph from the cache layer and injects it on the view components using HOCs. The synching between server and client is so nicely done that in a lot of times you will see areas on the screen updating to correct values without even thinking about it.
+This client does the dirty work of making assynchronous queries to the server, normalizing the data received and saving it in the cache. It also rebuild that data graph from the cache layer and injects it on the view components using HOCs. The synching between server and client is so nicely done that in a lot of times you will see areas on the screen updating to correct values without even thinking about it.
 
 Apollo also is able to issue mutations to te server, that are the way we have to change data using GraphQL. It has a lot of nice tools to do those jobs, allowing us to concentrate more time on the view, since communication with server is taken care. 
 
 Apollo is a nice improvement over tradicional client server communication libs and one of the reasons it's possible is because it uses a recent (2015) technology, open sourced by Facebook that is, IMHO, reinventing that communication. 
+
+And, to learn Apollo, my learning journey also required me to learn GraphQL. 
 
 #### GraphQL
 
