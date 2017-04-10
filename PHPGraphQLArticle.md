@@ -20,23 +20,29 @@ Don't take the example here as "Best Practices". It's impossible to talk about "
 
 ### Decisions taken
 
-Please, allow me an overview before getting into the code. 
+I'll explain how I got to this architecture before getting into the code, so that you understand the driving forces behind it. 
 
-I was studying Apollo Client to integrate data into my React Frontend. Apollo is a very recent technology, build by the Meteor Development Group. It's a client for JS applications. In my specific case, for a React application. 
+I was already using React in my frontends. And was very happy with it. My apps were getting a lot clener on the view because of React's paradigm. **It's beauty lies in the fact that you always have a predictable view for a specific model state.** The hadaches with a lot of binds and listeneres are mostly gone and the result is clean and predictable code.
 
-React and Redux make a great pair for frontend development, but there is a fundamental missing point, not in their scope, that is the data integration with server. To be more specific, the assynchronous integration. 
+To manage state, React requires another lib and I was using one of the most addopted ones, called Redux. React and Redux make a great pair for frontend development. Since I began using them, I don'r remember one day I lost time tracking for the cause of an unexpected behaviour on the view. 
+
+But, even with all those strong points, there was a fundamental missing one. Something out of the scope of these libs, that is the data integration with the server. To be more specific, the assynchronous integration. 
+
+So, I was looking for a way to integrate data into my React Frontend. I tried Relay, but I did not made good progress, due to their docs at that time and then I met Apollo.  Apollo is a GraphQL client, built by the Meteor Development Group. It's a data client that runs with your JS application and is responsible to manage the data and data integration with the server.
 
 #### Apollo
 
-And that is where the GraphQL client [Apollo](http://dev.apollodata.com/) rules. It has a great set of tools like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more.
+IMHO, [Apollo](http://dev.apollodata.com/) does his job in an excelent way. It has great documentation, very active slack channels and a growing community. It has a great set of well implemented features like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more.
 
-This client does the dirty work of making assynchronous queries to the server, normalizing the data received and saving it in the cache. It also rebuild that data graph from the cache layer and injects it on the view components using HOCs. The synching between server and client is so nicely done that in a lot of times you will see areas on the screen updating to correct values without even thinking about it.
+This client does the *dirty work* of making assynchronous queries to the server, normalizing the data received and saving it in the cache. It also rebuild that data graph from the cache layer and injects it on the view components using HOCs. 
 
-Apollo also is able to issue mutations to te server, that are the way we have to change data using GraphQL. It has a lot of nice tools to do those jobs, allowing us to concentrate more time on the view, since communication with server is taken care. 
+The synching between server and client is so nicely done that in a lot of times you will see areas on the screen updating to correct values without even thinking about it. That's a huge time saving on the frontend. 
 
-Apollo is a nice improvement over tradicional client server communication libs and one of the reasons it's possible is because it uses a recent (2015) technology, open sourced by Facebook that is, IMHO, reinventing that communication. 
+Apollo is also able to issue mutations to te server, that are the operations to change data using GraphQL. It has a lot of nice tools to do those jobs, allowing us to concentrate more time on the view, since communication with server is taken care. 
 
-And, to learn Apollo, my learning journey also required me to learn GraphQL. 
+Apollo is a nice improvement over tradicional client server communication libs. And one of the main reasons that it's possible to exist is because it uses a recent (2015) technology, open sourced by Facebook, that is, IMHO, reinventing that client-server communication. 
+
+So, to learn Apollo, my learning journey also required me to learn GraphQL. 
 
 #### GraphQL
 
