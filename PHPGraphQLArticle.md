@@ -503,22 +503,22 @@ Long life to GraphQL!
 So, now that we dived in the system adding this functionality, we can have a better view of the big components of our architecture: 
 
 The GraphQL layer, implemented using the OverblogGraphQLBundle. 
-    - We define the GraphQL schema and expose an endpoint.
-    - All queries and mutations will enter through that endpoint. 
-    - Validation will be run, using a strict type system. 
-    - Execution will run through resolvers. 
+* We define the GraphQL schema and expose an endpoint.
+* All queries and mutations will enter through that endpoint. 
+* Validation will be run, using a strict type system. 
+* Execution will run through resolvers. 
 
 The testing layer. 
-    - Ok, I know tests are not strictly a layer on the architecture. But I want to leave them here to remind you that you can call those GraphQL queries using the tests and implement a safety net on your system. Also tests can serve as a very good documentation.  
+* Ok, I know tests are not strictly a layer on the architecture. But I want to leave them here to remind you that you can call those GraphQL queries using the tests and implement a safety net on your system. Also tests can serve as a very good documentation.  
 
 The resolvers layer, implementing business logic. 
-    - Those are simple PHP classes registered as services
-    - We map them using the Expression Language in the schema definition. 
-    - Resolvers receive validated args and return data. 
-    - They alter data when running mutations. 
-    - That return data is also validated by the GraphQL layer in it's way back. 
-    - Usually resolvers will call a data layer like Doctrine to do their job. 
-    - But they can also call a lot of different services, even a rest call can be done there. 
+* Those are simple PHP classes registered as services
+* We map them using the Expression Language in the schema definition. 
+* Resolvers receive validated args and return data. 
+* They alter data when running mutations. 
+* That return data is also validated by the GraphQL layer in it's way back. 
+* Usually resolvers will call a data layer like Doctrine to do their job. 
+* But they can also call a lot of different services, even a rest call can be done there. 
 
 The data layer, specific to your application. 
 
