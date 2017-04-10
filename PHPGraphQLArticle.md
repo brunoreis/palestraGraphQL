@@ -26,9 +26,31 @@ I was studying Apollo Client to integrate data into my React Frontend. Apollo is
 
 React and Redux make a great pair for frontend development, but there is a fundamental missing point, not in their scope, that is the data integration with server. To be more specific, the assynchronous integration. 
 
-And that is where Apollo rules. It has a great set of tools like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more. You can [check it out on their site](http://dev.apollodata.com/) if you wish. 
+#### Apollo
 
-And, to use Apollo, I had to learn [GraphQL](http://graphql.org/learn/) because Apollo is built to be backed by a GraphQL server. 
+And that is where Apollo rules. It has a great set of tools like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more. You can [check it out on their site](http://dev.apollodata.com/) if you wish.
+
+So, Apollo does the dirty work of making assynchronous queries to the server, normalizing the data received and saving it in the cache. It also rebuild that data graph from the cache layer and injects it on the view components using HOCs. The synching between server and client is so nicely done that in a lot of times you will see areas on the screen updating to correct values without even thinking about it.
+
+Apollo also is able to issue mutations to te server, that are the way we have to change data using GraphQL. It has a lot of nice tools to do those jobs, allowing us to concentrate more time on the view, since communication with server is taken care. 
+
+Apollo is a nice improvement over tradicional client server communication libs and one of the reasons it's possible is because it uses a recent (2015) technology, open sourced by Facebook that is, IMHO, reinventing that communication. 
+
+#### GraphQL
+
+[GraphQL](http://graphql.org/learn/) is a client query language and server spec that facebook has being useing since 2012 and open sourced in 2015. GraphQL puts a lot of control on the client, allowing the client to make queries that specify the fields it wants to see and also the relations it wants. This saves us a lot of requests while calling the server.  
+
+The language is also strongly typed and introspective. This allows the validation of the request payloads and responses in the GraphQL layer, imposing a very good contract between client and server. The introspective nature of it allows for custom development tools to build great API documentation with very few human interaction. Indeed all we need is to put good description fields. 
+
+In the proccess of building the server, I also found out that the GraphQL model imposes a very nice server architecture that has similar driving forces puttin our focus more on the business logic and less on boilerplate code. 
+
+GraphQL has being evolving so fast that in this short period of time it already has implementations in JS, Ruby, Python, Scala, Java, Clojure, GO, PHP, C# / .NET and other languages. It also has a great ecosystem growing around it even with serverless services being ofered using it as an interface. 
+
+My opinion is that it has being a long time that community was waiting for something with more functionality to replace REST. Modern applications are a lot more client centered and it makes a lot of sense to give clients more responsibility and flexibility on how they need to query the informations on the server. And GraphQL does it in a great way. 
+
+Of course REST was developed a long time ago (in SW chronology). But I also believe that GraphQL's origin, being developed inside a big company like FB, evolving being tested against real world scenarios and just then being open sourced, also coontributes to it's robustness and excelent fit to modern apps.
+
+#### PHP
 
 I usually use PHP and Symfony on the backend, so that was my natural choice. 
 
