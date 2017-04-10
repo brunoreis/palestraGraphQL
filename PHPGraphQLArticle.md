@@ -42,15 +42,13 @@ And that was a fantastic bonus to me. I was looking for a GraphQL server with th
 
 Talking about tests, another decision taken was to run most tests over the API layer, what also proved to be a very good decision. In fact, my working proccess of a new feature now allways starts from the schema going to the tests on the top of that schema. Those are the beginning step prior to actual implementation of the features.  
 
-I'll do my best to guide you through this development process along this post. 
-
-I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. I hope you will like it as much as I do.
+I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. 
 
 After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
 
 ### The App 
 
-The view is usually the easiest part to understand an application domain. So let's do it before we install the backend and look at it's API. 
+The view is usually the easiest part to understand an application domain. So let's look at it before we install the backend and look at it's API. 
 
 We are gonna work on a Knowledge Management App. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
 
@@ -66,12 +64,12 @@ This App gives us interesting data structures to serve us as an example:
 4. Lots of simple views, menus and buttons.
 5. Forms and data edition - Add Tag, Edit Subtopic, Add Subtopic, and so on...
 
-**These examples are all available on the repository code** and can ilustrate how to handle these data structures on both front and backend. 
+These examples are all on the repository and can demonstrate with code how to handle these data structures on both front and backend. 
 
 
 ### Installation
 
-We will try to put all needed code and images in the article. But, I encourage you to clone the repo anyways, because you can look at all the rest of the code available there. And that will also give you a feeling about code organization. 
+Code and images are available through the article. But, I encourage you to clone the repo anyway, to play with it and look at the rest of the code available there. 
 
 1. [Clone the backend repo.](https://gitlab.com/bruno.p.reis/nosso-jardim)
 2. Run composer install and configure your parameters
@@ -81,8 +79,9 @@ We will try to put all needed code and images in the article. But, I encourage y
 
 TODO: rewrite readme in english to help these steps
 
-
 ## The Development Cycle
+
+This are the steps I usually take when I add a new functionality to the system:
 
 1. Define the functionality
 2. Define the Schema
@@ -90,10 +89,9 @@ TODO: rewrite readme in english to help these steps
 4. Making test pass - Improving the schema and the resolver
 5. Refactor
 
+### Defining the functionality
 
-### Defining the Schema
-
-I usually think visually. I start designing from the frontend. So, our task will be taking this: 
+Our task will be taking this: 
 
 <img src="./images/tagFormBefore.png" width="600">
 
@@ -101,22 +99,27 @@ And turning into this:
 
 <img src="./images/tagFormAfter.png" width="600">
 
+So  we are goint to add extra information about the classification (tagging) of a thread in a specific subtopic. 
 
-To add extra information about the classification (tagging) of a thread in a specific subtopic. 
+So, let's look at GraphiQL. GraphiQL is a tool where you can see the documentation of a GraphQL server and also run queries and mutations in it. If you started the server it should be running under 127.0.0.1:8000/graphiql or any similar location. 
 
-So, let's look at GraphiQL. If you started the server it should be running under 127.0.0.1:8000/graphiql or any similar location. We will look more specifically on the mutation that is used to insert an information. An information is the relationship between a thread and a subtopic. You can understand it as a tag also. 
+Let's see the mutation that is used to insert an Information. Information is an entity in our system. It's the relationship between a Thread and a Subtopic. You can also understand it as a tag. 
 
-The mutation is called "informationRegisterForThread". I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
+The mutation is called "informationRegisterForThread". 
 
 <img src="./images/informationRegisterForThreadBefore.png" width="400">
 
-You can see it expects a required id (ID!) and also an InformationInput object: 
+You can see it expects a required id (ID!) and also an InformationInput object. If you click on that InformationInput, you will see it's schema: 
 
 <img src="./images/informationInputBefore.png" width="400">
 
-It might seem funny to have a nested InformationInput object nested into those args. Specially because it now contains only one subtopicId field. But, this is a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
+BTW, I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
 
-And this will help us now, because we will add our text field data to that object, so start changing our schema: 
+It might seem funny or unnecessary to have a nested InformationInput object into those args. Specially because it now contains only one subtopicId field. This is, indeed, a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
+
+And this will help us now. 
+
+We need to add a new input field to that mutation, to register that extra 'about' text, and we can add that field inside our InformationInput object. So let's start by changing our schema: 
 
 ```json
 #InformationInput.types.yml
@@ -146,21 +149,21 @@ InformationInput:
 
 ```
 
-So we added the 'about' field. And we also improved docs with 'description' fields. Let's see our docs now: 
+We have added the 'about' field. We also improved docs with 'description' fields. Let's see our docs now: 
 
 <img src="./images/informationInputAfter.png" width="400">
 
 If you click on "about" and "subtopicId", you will be able to read the descriptions added for those fields. Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
 
-So, now we may add a new field, called 'about' to our mutation, inside the information field that is expecting a InformationInput typed data. Since or new field is not mandatory, our app is still running just fine. Try making it required (!) and see our guardian GraphQL layer in action. 
+Now we may add a new field 'about' when calling our mutation. Since our new field is not mandatory, our app should still be running just fine. 
 
-Schema created! We can go ahead and write the resolver, right? Not so fast ... What about a little TDD? The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
+Our schema is created. Before we actually implement the saving of that data, what about a little TDD? 
+
+The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
 
 ### Writing tests
 
-Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. So I could have written the test before the schema. What is the correct order? 
-
-Sometimes I feel it's better to write them first, sometimes I write the scema first. No strict rule on that. Eperience and feeling taking precedence. 
+Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. 
 
 So, now let's write our test to add the 'about' data in our query and see if it is returned back when we read the thread with it's informations. 
 
