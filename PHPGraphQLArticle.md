@@ -435,9 +435,11 @@ One of the benefits I see using GraphQL is to be able to think functionality fro
 
 When we wrote our resolver, we could be confident that we were receiving good data, passed through a typed validation system, and also that the data we returned was being checked with the same criteria. 
 
-[This nice article about 'GraphQL first'] from DeBergalis is a nice one talking about this way of developing starting from the contract. Having used it now for a while, I can add to the voices saying it will save you unnecessary work and headaches. And give you code that fulfill client's expectations in a more precise way, since you already start from there.
+[This nice article about 'GraphQL first'](https://dev-blog.apollodata.com/graphql-first-a-better-way-to-build-modern-apps-b5a04f7121a0) from DeBergalis is a nice reference talking about this way of developing starting from the contract. 
 
-So, what we've done...
+Having used it now for a while, I can add to the voices saying it will save you unnecessary work and headaches. And give you code that fulfill client's expectations in a more precise way, since you already start from there.
+
+So, what have we done? 
 
 1. Understood our functionality
 2. Defined the schema
@@ -496,7 +498,34 @@ Such a field could help us saving a request to grab this extra information and k
 
 Long life to GraphQL!
 
-## Putting the pieces together. 
+## Big Components
+
+So, now that we dived in the system adding this functionality, we can have a better view of the big components of our architecture: 
+
+The GraphQL layer, implemented using the OverblogGraphQLBundle. 
+    We define the GraphQL schema and expose an endpoint.
+    All queries and mutations will enter through that endpoint. 
+    Validation will be run, using a strict type system. 
+    Execution will run through resolvers. 
+
+The testing layer. 
+    Ok, I know tests are not strictly a layer on the architecture. But I want to leave them here to remind you that you can call those GraphQL queries using the tests and implement a safety net on your system. Also tests can serve as a very good documentation.  
+
+The resolvers layer, implementing business logic. 
+
+    Those are simple PHP classes registered as services
+    We map them using the Expression Language in the schema definition. 
+    Resolvers receive validated args and return data. 
+    They alter data when running mutations. 
+    That return data is also validated by the GraphQL layer in it's way back. 
+    Usually resolvers will call a data layer like Doctrine to do their job. 
+    But they can also call a lot of different services, even a rest call can be done there. 
+
+The data layer, specific to your application. 
+
+
+
+## Extra pieaces. 
 
 In the last Section, "The Development Cycle", we understood (I hope ;-)) how this architecture works in a dynamical way. 
 
