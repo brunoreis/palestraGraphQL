@@ -526,9 +526,7 @@ So, now that we dived in the system adding this functionality, we can have a bet
 
 ## Extra pieaces. 
 
-In the last Section, "The Development Cycle", we understood (I hope ;-)) how this architecture works in a dynamical way. 
-
-In this section I'll tell some extra details about specific libs and configurations I fell are important to finalise our job here. What job? Transmitting to you this architecture and enabling you to know what each part is for, how it serves the whole and giving you a way to judge if you need it or not. 
+In the last Section, "The Development Cycle", I explained how this architecture works in a dynamical way. In this section I'll add some extra details about specific libs and configurations I fell are important to explain this architecture to you.
 
 ### Overblog GraphQL 
 
@@ -536,20 +534,17 @@ To build the GraphQL server over symfony, we are using the Overblog GraphQL [Bun
 
 It's a very good lib that integrate the GraphQL lib into symfony adding nice features to it. 
 
-One very special feature it has is the [Expression Language](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/expression-language.md). BTW, that's a missing point on the upper section, the secret place where you map this: 
+One very special feature it has is the [Expression Language](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/expression-language.md). You can use it to declare the resolvers, specifying what service to use, what method to call and what args to pass like in the string below. 
+
 
 ```yml
     # Mutation.types.yml
     resolve: "@=service('app.resolver.informations').registerForThread(args)"
 ```
 
-To the call to registerForThread method into the service registered as 'app.resolver.informations'. It also improves error handling, implement endpoints and more...
+The bundle also implement endpoints, improve error handling and add some other things over the Webonyx GraphQL lib. One nice lib it requires is the overblog/graphql-php-generator that is responsible by reading a nice and clean yml and convert it into the GraphQL type objects. It will all happen under the hood and all you will need to touch is the yml and the resolvers. 
 
-As you can see on it's [requirements](https://github.com/overblog/GraphQLBundle/blob/master/composer.json), it is built over cool libs. I want to especially note these two: 
-
-	1 - overblog/graphql-php-generator - This is responsible for reading a nice and clean yml and convert it into the GraphQL type objects. It will all happen under the hood and all you will need to touch is the yml and the resolvers. 
-
-	2 - webonyx/graphql-php - This is the real engine of our car. A PHP port of GraphQL reference implementation. Very stable and ready to use. Please take a look at the docs and I call special attention to the 
+That's a major lib in my opinion because it adds usability and readability to the GraphQL lib and was, along with the expression language, the reason I decided to migrate from Youshido's lib. 
 
 ### The Schema Declaration - The entrance to the backend
 
@@ -572,7 +567,9 @@ If you don't know this bundle yet, it's worth taking a look at it. It will manag
 
 ### Error Handling
 
-Error handling is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. And, as we can see by the community, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
+The last missing topic I'm gonna touch is error handling. This is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. 
+
+And, as we can see by the community, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
 
 Being GraphQL so recent, it's expected that you don't have well established best practices on it yet. And this is something nice to take into consideration when designing your system. Maybe you see a better way of doing things. So, please do it, test, and share with us. 
 
@@ -603,10 +600,8 @@ Exceptions are also logged on dev.log.
 
 ### Final Considerations
 
-I'm glad you made it. I know this article is larger than usual. I had so many insights and sgruggles to put this all together that, in fact, I had to cut a lot of paragraphs and content to make this. 
+I'm glad you made it. I had so many insights and struggles in the development process that when I decided to to them all together in this article. It got very very messy. I had to cut a lot of paragraphs and content to make it more coherent.
 
-My first text version also included the frontend with Apollo Client and React Semantic and optimization as big class topics. I also know there are some missing important points to talk about, like pagination, connections, user authorization and authentication. 
+Please let me know your opinions and how I can improve it. All suggestions are very welcome. In the architecture and in the post also. And please let me know if you have any doubts. 
 
-So, please add a comment with your feedback, speacially saying where I can improve. In all aspects. Was it usefull to you? Do you want me to talk about something else? Is the line or tought clear? 
-
-Thanks for reading this far. I hope I contibuted with your discoveries about GraphQL. 
+Thanks for reading this far. I hope I contibuted with your discoveries about GraphQL and for it's addoption by the PHP community. 
