@@ -165,7 +165,7 @@ The scema is easily visible on the frontend and I feel it's ok to write it witho
 
 Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. 
 
-To run the test, I'm needing to clear the cache everytime. I think it's a small bug on the code generation from yml schema, later I will take a closer look and report if I find somethig. Meanwhile, please use this to run your tests: 
+To run the test, I'm needing to clear the cache everytime, so I'm running this line: 
 
 ```
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
@@ -222,9 +222,9 @@ Let's write our test to add the 'about' data in our query and see if it is retur
         $this->assertEquals($s2,$informations[0]['subtopic']['id']);
     }
 */ 
-``
+```
 
-The helper (InformationTestHelper) is responsible by calling the queries on the GraphQL layer and return a function. That function is then called with a json path to grab what we need. This pattern may seem a little tricky at first, but it pays the cost with the clarity we get from it. 
+The helper (InformationTestHelper) is responsible by calling the queries on the GraphQL layer and return a function. It returns a function so that we can call it with a json path to grab what we need. This pattern, function returning a function, may seem a little tricky at first, but it pays the cost with the clarity we get from it. 
 
 Let's refactor a little and you will see what I'm talking about: 
 
@@ -308,11 +308,9 @@ in response to the query
 ```php
 'thread.informations.1.subtopic.id'
 ``` 
-that was made through JsonPath into the response that came fron the GraphQL layer. 
+that was made through JsonPath into the response that came fron the GraphQL layer. Now that you know how tests are working, let's test for the new field we are going to add. 
 
-Well, let's do our job and test for the new field we are adding. Let's make it simpler, we will register an information adding data in the 'about' field, that is nested inside the 'information' field. 
-
-After that we will load that thread back, query that field's value and compare it against the original string to check it worked. 
+We will register an information with data in the 'about' field. After that we will load that thread back, query that field's value and assert it is equal to the original string. 
 
 ```php
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
@@ -340,11 +338,12 @@ After that we will load that thread back, query that field's value and compare i
     }
 ```
 
-As a good just created test, it will fail! It will say that it could not query the  about field on the response. 
+Now, let's follow in a TDD way, running the test and answering to it's requests. 
+
 
 ### Making test pass - Improving the schema and the resolver
 
-So let's add it to the THREAD query:   
+Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it there. 
 
 ```php 
     # Tests\AppBundle\GraphQL\TestHelper.php
@@ -376,7 +375,7 @@ Doing so, I get this error:
     [message] => Cannot query field "about" on type "Information".
 ```
 
-And that's correct. We added 'about' to the InformationInput type. Now we need to add it to the Information.types.yml:
+And that's correct. We added 'about' to the InformationInput type. Now we need to add it to the Information GraphQL type:
 
 ```yml
 #Information.types.yml
@@ -385,18 +384,18 @@ And that's correct. We added 'about' to the InformationInput type. Now we need t
                 description: "extra information" 
 ```
 
-With that in place, we now get a: 
+Now that Information has the 'about' field, we run the test and get a: 
 
 ```
 Failed asserting that null matches expected 'Nice information about that thing.'
 ```
 
-So, we can understand GraphQL is ok and the fun is now on the resolvers. Why? Because about is being received as a correct and validated field, and able to be queried. It's not returned yet because we did not add it to our data layer. 
+So, we can understand GraphQL is ok, because we did not get any validation errors from the data being sent or retreived back. So we can work on the resolvers now. 
 
 In order to complete our mission, we need to 
 
 1. save it when the mutation is received and 
-2. read it on the THREAD query. That is normally handled by doctrine for us.  
+2. read it on the THREAD query.   
 
 ```php
 # 1 - AppBundle\Resolver\InformationsResolver
@@ -415,17 +414,11 @@ In order to complete our mission, we need to
         $this->em->refresh($thread);
         return $thread;
     }
-```
 
-That should do the trick. But, we still need something. Let's add the field to our model: 
+#AppBundle\Entity\Information
 
-```
-Error: Call to undefined method AppBundle\Entity\Information::setAbout()
-... add doctrine field ...
-@ORM\Column(name="about", type="text", nullable=true)
-... update schema ...
-bin/console doctrine:schema:update --force
-```
+    @ORM\Column(name="about", type="text", nullable=true)
+````
 
 And then, we get the very wanted green message we were waiting for passing the test.
 
