@@ -2,13 +2,24 @@
 
 # Introduction
 
+### Overview
+
+In this article we:
+
+* Give an introduction on GraphQL showing some of it's improvements over REST
+* Describe the architecture of a PHP GraphQL server
+* Show the development of a new feature in that server. 
+
 ### Is this for me?
 
-Have you heard about GraphQL? Facebook open sourced it on 2015 and IMHO it is a much better way to stablish contracts between clients that REST. So better that it allows better tools and technologies on both client and server. If you are like me, allways looking for a better way to develop your apps, aiming to have the least boilerplate code and the most mainteinability, you will sure like to take a look at it. 
+Have you heard about GraphQL? Facebook open sourced it on 2015 and IMHO it is a much better way to stablish contracts between clients that REST. The improvements achieved also allow better tools and technologies on both client and server. 
 
-In this article, we will show the development of a new feature in a GraphQL server built in PHP. Our goal is to explore the architecture used on the PHP server by adding a small functionality to the application. 
+If you are like me, allways looking for a better way to develop your apps, aiming to have the least boilerplate code and the most mainteinability, you will sure like to take a look at it.
 
-If you are considering to set up a GraphQL server in PHP, or if you just want to know more about this technology, you will probably like what you find here. When I was studying to build this app, I felt that there were missing code examples on the community, especially in PHP, so I hope this can add to the PHP community addoption of GraphQL.
+
+If you are considering to set up a GraphQL server in PHP, or if you just want to know more about this technology, you will probably like what you find here. 
+
+When I was studying to build this app, I felt that there were missing code examples on the community, especially in PHP, so I hope this can add to the PHP community addoption of GraphQL.
 
 It's worth noticing the code we are going to explore is open sourced and you can also use it as your own foundation. In there you have a lot of code examples to look that might be usefull for your own study. 
 
