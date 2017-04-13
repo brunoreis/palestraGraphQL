@@ -7,7 +7,7 @@
 In this article we:
 
 * Give an introduction on GraphQL showing some of it's improvements over REST
-* Describe the architecture of a PHP GraphQL server
+* Describe the architecture of a PHP GraphQL server used in an open source project
 * Show the development of a new feature in that server. 
 
 ### Is this for me?
@@ -102,7 +102,7 @@ So, look at this. That is only our query! Notice how much information we can gra
 GraphQL usually has only one endpoint, and we make all requests there specifying queries like this. The server defines a schema that list the queries, it's possible arguments and return types. The schema of our example, defining the "posts" query, would be something like this: 
 
 
-```
+```yml
 # Queries.types.yml
 # ...
         fields:
