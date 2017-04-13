@@ -4,9 +4,11 @@
 
 ### Is this for me?
 
+Have you heard about GraphQL? Facebook open sourced it on 2015 and IMHO it is a much better way to stablish contracts between clients that REST. So better that it allows better tools and technologies on both client and server. If you are like me, allways looking for a better way to develop your apps, aiming to have the least boilerplate code and the most mainteinability, you will sure like to take a look at it. 
+
 In this article, we will show the development of a new feature in a GraphQL server built in PHP. Our goal is to explore the architecture used on the PHP server by adding a small functionality to the application. 
 
-If you are considering to set up a GraphQL server in PHP, you will sure find a good example here. When I was studying to build this app, I felt that there were missing code examples on the community, especially in PHP.
+If you are considering to set up a GraphQL server in PHP, or if you just want to know more about this technology, you will probably like what you find here. When I was studying to build this app, I felt that there were missing code examples on the community, especially in PHP, so I hope this can add to the PHP community addoption of GraphQL.
 
 It's worth noticing the code we are going to explore is open sourced and you can also use it as your own foundation. In there you have a lot of code examples to look that might be usefull for your own study. 
 
@@ -57,6 +59,162 @@ GraphQL has being evolving so fast that in this short period of time it already 
 My opinion is that it has being a long time that community was waiting for something with more functionality to replace REST. Modern applications are a lot more client centered and it makes a lot of sense to give clients more responsibility and flexibility on how they need to query the informations on the server. And GraphQL does it in a great way. 
 
 Of course REST was developed a long time ago (in SW chronology). But I also believe that GraphQL's origin, being developed inside a big company like FB, evolving being tested against real world scenarios and just then being open sourced, also coontributes to it's robustness and excelent fit to modern apps.
+
+#### Some GraphQL improvements over REST
+
+I'll make a small parenthesis here to explain a little more why I've liked so much the GraphQL approach. Let's see it in practice. 
+
+Imagine you want to retrieve a list of posts from a user using REST. You would probably access and endpoint like: 
+
+```
+http://mydoma.in/api/user/45/posts
+```
+
+What information does that gives us? What data will come from that request? We don't have a way to know it unless we look at the code or add documentation over that, using a tool Swagger. So, you need to install another tool, learn it and add a new activity to your development cycle that is mantaining a swagger file.
+
+Now, let's look at the same query in GraphQL: 
+
+```graphql
+query UserPosts{
+    posts(userId:45) {
+        id
+        title
+        text
+        createdAt
+        updatedAt
+    }
+}
+```
+
+So, look at this. That is only our query! Notice how much information we can grab from there. But, that's not all GraphQL has to offer. Indeed, this is just the beggining. 
+
+GraphQL usually has only one endpoint, and we make all requests there specifying queries like this. The server defines a schema that list the queries, it's possible arguments and return types. The schema of our example, defining the "posts" query, would be something like this: 
+
+
+```
+# Queries.types.yml
+# ...
+        fields:
+            posts:
+                type: "[Post]"
+                args:
+                    userId:
+                        type: "ID!"
+                resolve: "@=service('app.resolver.posts').find(args)"
+# Post.types.yml
+Post:
+    type: object
+    config:
+        description: "An article posted in the blog."
+        fields:
+            id:
+                type: "ID!"
+            title:
+                type: "String"
+            text: 
+                type: "String"
+                description: "The article's content"
+            createdAt:
+                type: "DateTime"
+            updatedAt:
+                type: "DateTime"
+            comments:
+                type: "[Comment]"
+```
+> This is defined using the PHP GraphQL lib, it could look different if defined, let's say, in a JS lib.
+
+So this schema has a lot to declare: 
+
+* It declares the query "posts"
+* That this query returns an array of objects of the type "Post"
+* That the query can accept an "userId" argument of type ID that is required (!)
+* How to resolve that query. In the example, a service method (find) is called with the passed args
+* It also declares the Post type, with strong typed fields
+
+It's similar to an Swagger file, right? But, it's part of our system. Part of our development proccess is to declare that schema. This is one big improvement over REST: 
+
+*documentation is generated in the development proccess*
+
+What else? Let's imagine now we need to access this same service from a mobile device to make a very simple and optimized list of all posts. We just need two fields, title and id. How would you do that in REST? Well, you probably would need to pass a parameter to specify this return type and code it inside your controller, putting a switch of if somewhere.
+
+In GraphQL, all you need is to change the query to say what fields you need: 
+
+```graphql
+query UserPosts{
+    posts(userId:45) {
+        id
+        title
+    }
+}
+```
+
+That will return an array of posts with only those two fields: id and title. So we got to annother improvement over rest here: 
+
+*In GraphQL the client can specify in the query what fields are needed and only those will be returned on the response.*
+
+Now, let's move into another direction and think that we need more info. We are looking at a list of articles and we want to see those articles and the last 5 comments on them. In rest, we could do something like: 
+
+
+```
+http://mydoma.in/api/user/45/posts    
+```
+
+plus a lot of calls like: 
+
+```
+http://mydoma.in/api/post/3/comments?last=5
+http://mydoma.in/api/post/4/comments?last=5
+http://mydoma.in/api/post/7/comments?last=5    
+```
+
+to grab the comment list of all posts returned. Or maybe we could develop a specific endpoint:
+
+```
+http://mydoma.in/api/user/45/postsWithComments?lastComments=5
+``` 
+
+Or a customization on that one:
+
+```
+http://mydoma.in/api/user/45/posts?with=comments&lastComments=5
+``` 
+
+To me, all those solutions are cumbersome. I feel like I have spent too many time on my life coding a server response only to fullfill a specific return format. 
+
+Now let's look at how we can do this in GraphQL:
+
+``graphql
+query UserPosts{
+    posts(userId:45) {
+        id
+        title
+        text
+        createdAt
+        updatedAt
+        comments(last:5) {
+            id
+            text
+            user {
+                id
+                name
+            }
+        }
+    }
+}
+```
+
+So sweet! In the GraphQL query you can nest the fields you need, even if they are relations. So I just requested the relation called "comments". 
+
+And, more than that, I can also pass arguments to that relation, so I said I need the last 5 comments there. Even the naming got better because I did not need to come up with a weird 'lastComments' argument name. 
+
+So the query is a lot easier to understand, we can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. 
+
+In the server, it is also very nice to implement. Indeed, the resolver there does not need to know that we will want that nesting. I mean, it does not need to know we want the post WITH the comments. Because the comments have their own resolver and the GraphQL layer will call it on demand. 
+
+So, in practice, we don't need to do anything different to return the post than what we need to do to return it nested with it's comments. So, server code gets cleaner also. 
+
+These are only a small subset of the improvements I can see on GraphQL over REST. I hope they are enought to encourage your reading of this article. In the following paragraphs you will sure be able to understand a lot more about GraphQL. 
+
 
 #### PHP
 
