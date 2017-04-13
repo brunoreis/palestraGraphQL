@@ -194,8 +194,7 @@ To me, all those solutions are cumbersome. I feel like I have spent too many tim
 
 Now let's look at how we can do this in GraphQL:
 
-```
-graphql
+```graphql
 query UserPosts{
     posts(userId:45) {
         id
