@@ -2,15 +2,11 @@
 
 # Introduction
 
-### Overview
-
 In this article we:
 
 * Give an introduction on GraphQL showing some of it's improvements over REST
 * Describe the architecture of a PHP GraphQL server used in an open source project
 * Show the development of a new feature in that server. 
-
-### Is this for me?
 
 Have you heard about GraphQL? Facebook open sourced it on 2015 and IMHO it is a much better way to stablish contracts between clients that REST. The improvements achieved also allow better tools and technologies on both client and server. 
 
