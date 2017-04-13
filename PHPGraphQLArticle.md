@@ -183,7 +183,8 @@ To me, all those solutions are cumbersome. I feel like I have spent too many tim
 
 Now let's look at how we can do this in GraphQL:
 
-``graphql
+```
+graphql
 query UserPosts{
     posts(userId:45) {
         id
@@ -203,15 +204,21 @@ query UserPosts{
 }
 ```
 
-So sweet! In the GraphQL query you can nest the fields you need, even if they are relations. So I just requested the relation called "comments". 
+So sweet! I just needed to add the relation called "comments" to my query. 
 
-And, more than that, I can also pass arguments to that relation, so I said I need the last 5 comments there. Even the naming got better because I did not need to come up with a weird 'lastComments' argument name. 
+*In a GraphQL query you can nest the fields you need, even if they are relations.* 
 
-So the query is a lot easier to understand, we can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. 
+And, more than that, I declared on the parenthesys after the comments field that I need the last 5 comments there. Even the naming got better because I did not need to come up with a weird 'lastComments' argument name. So..
+
+*You are even able to pass arguments to every field or relation inside a query.*
+
+And the query is a lot easier to understand than those cumbersome rest calls above, we can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. 
 
 In the server, it is also very nice to implement. Indeed, the resolver there does not need to know that we will want that nesting. I mean, it does not need to know we want the post WITH the comments. Because the comments have their own resolver and the GraphQL layer will call it on demand. 
 
-So, in practice, we don't need to do anything different to return the post than what we need to do to return it nested with it's comments. So, server code gets cleaner also. 
+So, in practice, we don't need to do anything different to return the post than what we need to do to return it nested with it's comments. 
+
+*So, server code gets cleaner and well organized.* 
 
 These are only a small subset of the improvements I can see on GraphQL over REST. I hope they are enought to encourage your reading of this article. In the following paragraphs you will sure be able to understand a lot more about GraphQL. 
 
