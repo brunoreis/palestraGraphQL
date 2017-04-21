@@ -144,7 +144,9 @@ It's similar to an Swagger file, right? But, it's part of our system. Part of ou
 
 What else? Let's imagine now we need to access this same service from a mobile device to make a very simple and optimized list of all posts. We just need two fields, title and id. How would you do that in REST? Well, you probably would need to pass a parameter to specify this return type and code it inside your controller, putting a switch of if somewhere.
 
-In GraphQL, all you need is to change the query to say what fields you need: 
+In GraphQL, all you need is to change the query to say what fields you need. 
+
+> This is a query to the posts field in the query namespace. It defines the *userId* argument and also defines the fields it will need: *id* and *title*:
 
 ```graphql
 query UserPosts{
