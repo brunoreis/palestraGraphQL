@@ -331,6 +331,7 @@ And this will help us now.
 
 We need to add a new input field to that mutation, to register that extra 'about' text, and we can add that field inside our InformationInput object. So let's start by changing our schema: 
 
+
 ```json
 #InformationInput.types.yml
 
