@@ -195,6 +195,7 @@ To me, all those solutions are cumbersome. I feel like I have spent too much tim
 Now let's look at how we can do this in GraphQL:
 > Querying the posts field on the query namespace. We pass the argument userId==45 to say we want the posts of that user. We also pass all the required fields (*id*,*title*,*text*,...). 
 > One of these fields, *comments* is an object field, and that tells GraphQL to include that relation on the response. 
+> Please, notice that even this field receive it's argument (last==5)
 
 ```graphql
 query UserPosts{
@@ -261,6 +262,8 @@ We are gonna work on a Knowledge Management App. The main purpose of this app is
 
 The mais screen, as shown below, is where you organize messages in specific threads or conversations and put tags on those threads. 
 
+> In this animation, the user is selecting 9 messages and creating a thread. After that, he goes to the created thread and add a tag to classify that thread as a SQL thread. 
+
 ![Create a Thread and Tag it!](./images/createThread.gif)
 
 This App gives us interesting data structures to serve us as an example:
@@ -299,11 +302,11 @@ This are the steps I usually take when I add a new functionality to the system:
 ### Defining the functionality
 
 Our task will be taking this: 
-
+> This is the form where we add a tag to a thread. There is only a single combo where the user can select the tag. 
 <img src="./images/tagFormBefore.png" width="600">
 
 And turning into this: 
-
+> We will add a text field to add extra information about that to help indexing that thread into that tag. 
 <img src="./images/tagFormAfter.png" width="600">
 
 So  we are goint to add extra information about the classification (tagging) of a thread in a specific subtopic. 
@@ -313,11 +316,11 @@ Let's look at GraphiQL. GraphiQL is a tool where you can see the documentation o
 Let's see the mutation that is used to insert an Information. Information is an entity in our system. It's the relationship between a Thread and a Subtopic. You can also understand it as a tag. 
 
 The mutation is called "informationRegisterForThread". 
-
+> This is the schema of that mutation field, as seen in the graphiQL tool. This is auto-generated and readly available as soon as you write the schema. Since writing the schema is a main part of the development proccess, you allways will have an up to date documentation on your API. 
 <img src="./images/informationRegisterForThreadBefore.png" width="400">
 
 You can see it expects a required id (ID!) and also an InformationInput object. If you click on that InformationInput, you will see it's schema: 
-
+> This is the schema of the InformationInput type. It's the object sent to save a tag on a thread. The relation between a tag (subtopic) and a thread. 
 <img src="./images/informationInputBefore.png" width="400">
 
 > BTW, I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
