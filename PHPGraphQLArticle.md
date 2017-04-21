@@ -331,7 +331,8 @@ And this will help us now.
 
 We need to add a new input field to that mutation, to register that extra 'about' text, and we can add that field inside our InformationInput object. So let's start by changing our schema: 
 
-
+> This is the InformationInput type definition in our schema. We are going to add the "about" field to it. It's a String and it's not required. It would be required if it was "String!". We also refine the descriptions here. 
+> *input-object* is a specific object type to receive data. 
 ```json
 #InformationInput.types.yml
 
@@ -361,7 +362,7 @@ InformationInput:
 ```
 
 We have added the 'about' field. We also improved docs with 'description' fields. Let's see our docs now: 
-
+> Now we can see the added *about* field and also an improved description.
 <img src="./images/informationInputAfter.png" width="400">
 
 If you click on "about" and "subtopicId", you will be able to read the descriptions added for those fields. Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
@@ -382,7 +383,11 @@ To run the test, I'm needing to clear the cache everytime, so I'm running this l
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
 ```
 
-Let's write our test to add the 'about' data in our query and see if it is returned back when we read the thread with it's informations. We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
+We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
+
+> This test does not require a fixture. It create all it's required data. It create two subtopics (tags) and create 3 threads. The createThread will create dummy messages and add them to threads. After that it will add informations to the thread. Informations are the relations between a thread and a subtopic. AKA tag. 
+> After that it will read the thread informations and assert that two informations were inserted for thread with id *$t1*. And so on...
+> The upper cased methods are the ones that will make direct calls to the GraphQL queries and mutations. 
 
 ```php 
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
@@ -434,6 +439,8 @@ Let's write our test to add the 'about' data in our query and see if it is retur
     }
 */ 
 ```
+
+Let's write our test to add the 'about' data in our query and see if it's value is returned back when we read the thread nested with the information object field.
 
 The helper (InformationTestHelper) is responsible by calling the queries on the GraphQL layer and return a function. It returns a function so that we can call it with a json path to grab what we need. This pattern, function returning a function, may seem a little tricky at first, but it pays the cost with the clarity we get from it. 
 
