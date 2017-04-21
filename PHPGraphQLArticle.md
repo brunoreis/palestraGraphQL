@@ -146,7 +146,7 @@ What else? Let's imagine now we need to access this same service from a mobile d
 
 In GraphQL, all you need is to change the query to say what fields you need. 
 
-> This is a query to the posts field in the query namespace. It defines the *userId* argument and also defines the fields it will need: *id* and *title*:
+> This is a query to the posts field in the query namespace. It defines the *userId* argument and also defines the fields it will need: *id* and *title*
 
 ```graphql
 query UserPosts{
@@ -163,13 +163,14 @@ That will return an array of posts with only those two fields: id and title. So 
 
 Now, let's move into another direction and think that we need more info. We are looking at a list of articles and we want to see those articles and the last 5 comments on them. In rest, we could do something like: 
 
-
+> requesting the posts of the user 45 using REST
 ```
 http://mydoma.in/api/user/45/posts    
 ```
 
 plus a lot of calls like: 
 
+> requesting the comments of each post
 ```
 http://mydoma.in/api/post/3/comments?last=5
 http://mydoma.in/api/post/4/comments?last=5
@@ -178,19 +179,22 @@ http://mydoma.in/api/post/7/comments?last=5
 
 to grab the comment list of all posts returned. Or maybe we could develop a specific endpoint:
 
+> A "not pure" rest endpoint. Please notice there is no standard on that. 
 ```
 http://mydoma.in/api/user/45/postsWithComments?lastComments=5
 ``` 
 
 Or a customization on that one:
-
+> This would change the same endpoint as we've seen before, adding the parameter with=comments that would tell that endpoint to nest the comments into the posts. Please notice this would require changes on the service. 
 ```
 http://mydoma.in/api/user/45/posts?with=comments&lastComments=5
 ``` 
 
-To me, all those solutions are cumbersome. I feel like I have spent too many time on my life coding a server response only to fullfill a specific return format. 
+To me, all those solutions are cumbersome. I feel like I have spent too much time on my life coding a server response only to fullfill a specific return format. 
 
 Now let's look at how we can do this in GraphQL:
+> Querying the posts field on the query namespace. We pass the argument userId==45 to say we want the posts of that user. We also pass all the required fields (*id*,*title*,*text*,...). 
+> One of these fields, *comments* is an object field, and that tells GraphQL to include that relation on the response. 
 
 ```graphql
 query UserPosts{
