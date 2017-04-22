@@ -383,10 +383,12 @@ To run the test, I'm needing to clear the cache everytime, so I'm running this l
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
 ```
 
+#### Understanding the test and their helpers
+
 We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
 
 > This test does not require a fixture. It create all it's required data. It create two subtopics (tags) and create 3 threads. The createThread will create dummy messages and add them to threads. After that it will add informations to the thread. Informations are the relations between a thread and a subtopic. AKA tag. 
-> After that it will read the thread informations and assert that two informations were inserted for thread with id *$t1*. And so on...
+> After that it will read the thread informations and assert that two informations were inserted for thread with id *$t1*. And will also make some other assertions. 
 > The upper cased methods are the ones that will make direct calls to the GraphQL queries and mutations. 
 
 ```php 
@@ -446,6 +448,8 @@ The helper (InformationTestHelper) is responsible by calling the queries on the 
 
 Let's refactor a little and you will see what I'm talking about: 
 
+> The fixture creation is refactored into *createThreadsAndSubtopics*. 
+> The call to THREAD, with id==$t1, returns a function that we call again passing 3 path strings. That will return those 3 values as an array that we then assign to *$informations*, *$s1ReadId* and *$s2ReadId* using the *list* function. 
 
 ```php
 /** @test */
@@ -526,9 +530,16 @@ in response to the query
 ```php
 'thread.informations.1.subtopic.id'
 ``` 
-that was made through JsonPath into the response that came fron the GraphQL layer. Now that you know how tests are working, let's test for the new field we are going to add. 
+that was made through JsonPath into the response that came fron the GraphQL layer. This syntax is a little tricky, I know. But it pays in legibility when you understand it. So please read it again if you feel you still missing some understanding.
+
+Nice. Now that you know how tests are working, let's test for the new field we are going to add. 
+
+#### Writting our test
 
 We will register an information with data in the 'about' field. After that we will load that thread back, query that field's value and assert it is equal to the original string. 
+
+> In this test we use the *creteThreadsAndSubtopics* to create some data. After that we call the informationRegisterForThread field in the mutation object defined in our schema. We do that using the INFORMATION_REGISTER_FOR_THREAD helper. In that call we pass to arguments. The threadId and the InformationInput object we have defined with our recently defined *about* field. 
+> After that we query the thread and use the path *'thread.informations.0.about'* to grab the value of the 'about' field on the first information related to the thread object. We then assert to see if the value was saved. 
 
 ```php
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
@@ -556,12 +567,14 @@ We will register an information with data in the 'about' field. After that we wi
     }
 ```
 
-Now, let's follow in a TDD way, running the test and answering to it's requests. 
-
+Now, let's follow in a TDD way, running the test, making it fail, and answering to it's requests. 
 
 ### Making test pass - Improving the schema and the resolver
 
 Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it there. 
+
+> Here we go into the THREAD query helper, that make the call to the thread field in the query namespace, and add the about field as if it was already there. I know that it's not there, but we are moving in a TDD way, so if it's not finding the about on the requested data, I'll add it as if it were there in the "nearest" place.
+> This code is also nice because you can see how the helper is written and how the thread query is written. Please notice that the *processResponse* method will return that function that can be called with paths to query the response data. 
 
 ```php 
     # Tests\AppBundle\GraphQL\TestHelper.php
@@ -593,27 +606,40 @@ Doing so, I get this error:
     [message] => Cannot query field "about" on type "Information".
 ```
 
-And that's correct. We added 'about' to the InformationInput type. Now we need to add it to the Information GraphQL type:
+And that's correct, because we added *about* to the query but it does not exist in the Information type. We added 'about' to the InformationInput type to receive that data. But, the InformationInput is a special object to the mutation. Now we need to add it to the Information GraphQL type. That's the type related to the Thread object in the schema:
 
+> This is the Information object type in our GraphQL schema, with the about field added at it's bottom. Please notice that in the input-object, the received data is the *subtopicId*, here we have the *subtopic* field that is an object of the Subtopic type. 
 ```yml
 #Information.types.yml
+Information:
+    type: object
+    config:
+        description: "A tag, a classification of some thread, creating a relationship with a subtopic that indicates a specific subject."
+        fields:
+            id:
+                type: "ID!"
+            thread:
+                type: "Thread"
+                description: "Thread that receive this information tag"
+            subtopic:
+                type: "Subtopic"
+                description: "The related subtopic"
             about:
                 type: "String"
-                description: "extra information" 
+                description: "extra information"
 ```
 
-Now that Information has the 'about' field, we run the test and get a: 
+Now that Information has the 'about' field, we run the test again and get a: 
 
 ```
-Failed asserting that null matches expected 'Nice information about that thing.'
+Failed asserting that null matches expected 'Nice information about that thing.'. 
 ```
 
-So, we can understand GraphQL is ok, because we did not get any validation errors from the data being sent or retreived back. So we can work on the resolvers now. 
+So, we can understand GraphQL is ok, because we did not get any validation errors from the data being sent or retreived back. The error still there because, in fact, we have not yet persisted our data to the db. So, let's work on the resolvers now. 
 
-In order to complete our mission, we need to 
+We will add the field to our mutation resolver. And also add the field to our ORM as shown in the code below by the annotation. 
 
-1. save it when the mutation is received and 
-2. read it on the THREAD query.   
+> Receiving the about field and setting it on the Information object. 
 
 ```php
 # 1 - AppBundle\Resolver\InformationsResolver
@@ -622,10 +648,10 @@ In order to complete our mission, we need to
     {
         $thread = $this->repo('AppBundle:Thread')->find( $args['threadId'] );
         $subtopic = $this->repo('AppBundle:Subtopic')->find( $args['information']['subtopicId'] );
-        $about = $args['information']['about'];
+        $about = $args['information']['about']; # here
         $info = new Information();
         $info->setSubtopic($subtopic);
-        $info->setAbout($about);
+        $info->setAbout($about); # and here
         $thread->addInformation($info);
         $this->em->persist($info);
         $this->em->flush();
