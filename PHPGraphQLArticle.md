@@ -675,13 +675,13 @@ And then, we get the very wanted green message we were waiting for passing the t
 
 Having our green lights on, it's time for some retrospective on what we've done so far. Going to a higher to a lower level, lets talk first about the proccess. 
 
-One of the benefits I see using GraphQL is to be able to think functionality from an API perspective first. Please notice we just touched the db layer at the very end, when we were sure our app would attend the outter world expectations, with the safety validations net in place. 
+One of the benefits I see using GraphQL is to be able to think functionality from an API perspective first. We just touched the db layer at the very end, when we were sure our app would attend the outter world" expectations. 
 
 When we wrote our resolver, we could be confident that we were receiving good data, passed through a typed validation system, and also that the data we returned was being checked with the same criteria. 
 
 [This nice article about 'GraphQL first'](https://dev-blog.apollodata.com/graphql-first-a-better-way-to-build-modern-apps-b5a04f7121a0) from DeBergalis is a nice reference talking about this way of developing starting from the contract. 
 
-Having used it now for a while, I can add to the voices saying it will save you unnecessary work and headaches. And give you code that fulfill client's expectations in a more precise way, since you already start from there.
+Having used GraphQL now for some months, I can add to the voices saying that this order of development will save you unnecessary work and headaches. Your code will fulfill client's expectations in a more precise way, because you start nearer the business logic.
 
 So, what have we done? 
 
@@ -695,18 +695,69 @@ It might seem as too many steps for some people, but to me they are very nice st
 
 1. Know what you are doing ( :-) ) 
 2. Define the contract and put validation in place
-3. Define how we want it to behaviour
+3. Define the expected behaviour
 4. Implement the logic
 5. Implement the persistence
 
+Nice!
+
+I strongly advocate toward this direction of development from business to technical details.  
+
 #### Improve 
 
-So, to honor the refactor step, looking at the code, is there anything that can be improved? Well, there is allway something. But, we should allways start from the lower hanging ones, right? 
+So far our test runs the *informationRegisterForThread* mutation and then uses the *thread* query to check for the inserted data. But, mutations can also return data. In fact, if we look carefully at them, mutations are identical to other queries. They have a return type and can specify the format of the returned data. 
 
-I was reading this article on [how to design mutations](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) and that approach seemed very nice to me. All the recommendations make sense, in our case, especially the one about allways having a specific return type exclusively baked for your mutation. 
+But, what does that mean to us? If we were making these calls from the client, we would be doing two queries: one for the mutation and another to retrieve the thread again. 
 
-Until now we have: 
+That' why the return type of the mutation is Thread: 
 
+> Take a look at the type (return type) of this mutation
+<img src="./images/informationRegisterForThreadBefore.png" width="400">
+
+The mutation is also a query on the thread. So, instead of doing this:
+> call mutation and call the threa query after that
+```php
+        $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>[ # information field
+                    'subtopicId'=>$s1,
+                    'about'=>'Nice information about that thing.' # about field
+                ]
+        ]);
+
+        $savedText = $h->THREAD(['id'=>$t1])( # query for the thread
+            'thread.informations.0.about' # query the result for that field
+        );
+
+        $this->assertEquals( 'Nice information about that thing.' , $savedText ); # check it 
+```
+
+we can do this: 
+> use the thread returned by mutation and query it's return (json path) with the 'informations.0.about'
+```php
+        list($savedAbout) = $h->INFORMATION_REGISTER_FOR_THREAD([
+                'threadId'=>$t1,
+                'information'=>[
+                    'subtopicId'=>$s1,
+                    'about'=>'Nice information about that thing.'
+                ]
+        ])('informations.0.about');
+
+        $this->assertEquals( 'Nice information about that thing.' , $savedAbout );
+```
+
+That will register the mutation and return the information we need to update the client with only one request. Even our test gets cleaner. 
+
+But, let's say we want a little more. We want to know which information was inserted. Since the thread has an information colletion, it could be any of the informations in the array. So, how can we know that? 
+
+We could return the information instead of returning the thread. But, that could not be our need, since we could have some changes on the thread also. 
+Well, a good news now. We don't need to return only the domain types we have so far. We can create specific types for our mutation returns. 
+
+Indeed, I was reading this article on [how to design mutations](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) and it enforces that a mutation should allways bake it's own type to return. And, in fact, that makes a lot of sense to me since we create a schema that's more flexible and has a good extension point. Adding a field on a return type, let's say, *InformationRegisterForThreatReturn*, is a lot easier then changing a mutation return type. 
+
+In our case, that would allow us to return the informationId and the thread. So, let's do it. So far we have: 
+
+> the schema for *informationRegisterForThread* mutation
 ```yml
 #Mutation.types.yml
             informationRegisterForThread:
@@ -721,6 +772,7 @@ Until now we have:
 
 The result type is the "Thread" type. This gives us almost none flexibility to add or remove informations that might be needed there. So let's bake a type for us: 
 
+> good practice: create a specific mutation return type for every mutation. That will give you flexibility on your schema evolution.
 ```yml
 # Mutation.types.yml - at the first level, after Mutation root field
 
@@ -732,13 +784,34 @@ InformationRegisterForThreadResult:
                 type: "Thread"
 ```
 
-From now on we nested our response inside threadField. Well, an extra level does not seem a good idea just for fun. But, that will give us a lot of flexibility. 
+and change this type in our mutation: 
 
-Imagine, for example, I want to allow this mutation to return extra information about an aggregated value. Let's say, a count of how many Threads have being tagged into that same subtopic. 
+```yml
+#Mutation.types.yml
+            informationRegisterForThread:
+                type: "InformationRegisterForThreadResult"
+                ...
+```
 
-Adding those fields in a flat response would be very confusing. But now we can just add a informationStatus field on the InformationRegisterForThreadResult type and that will be available and well organized. 
+Now we added a layer of flexibility to our return. Let's say we want to know the informationId of the information that was just inserted. We can just easily add it there: 
 
-Such a field could help us saving a request to grab this extra information and keeping the UI in synch with only one request that would do the mutation, return the thread with it's informations and also return those status. 
+> add a new field to the mutation result. That won't break anything on the client, due to the object returned. If the return was still the 'Thread' type, that would not be the case. 
+```yml
+# Mutation.types.yml - at the first level, after Mutation root field
+
+InformationRegisterForThreadResult:
+    type: object
+    config:
+        fields:
+            thread:
+                type: "Thread"
+            informationId:
+                type: "ID"
+```
+
+And that's it. We've added a very simple functionality on our system, but covered all the required steps and studied the rationale behind them. I hope you followed until here and learned something good so far. 
+
+Now that you already should have a good grasp on the architecture and how to layer that on a php server, the next sections will cover small topics like configuration details or specific tools required to put this all together. It's more like a reference to be consulted, but I felt it would be nice to put it here to give you all the information needet to set up your server. 
 
 Long life to GraphQL!
 
@@ -766,8 +839,6 @@ So, now that we dived in the system adding this functionality, we can have a bet
 
 **The Data Layer**, specific to your application. 
 
-
-
 ## Extra pieaces. 
 
 In the last Section, "The Development Cycle", I explained how this architecture works in a dynamical way. In this section I'll add some extra details about specific libs and configurations I fell are important to explain this architecture to you.
@@ -780,7 +851,7 @@ It's a very good lib that integrate the GraphQL lib into symfony adding nice fea
 
 One very special feature it has is the [Expression Language](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/expression-language.md). You can use it to declare the resolvers, specifying what service to use, what method to call and what args to pass like in the string below. 
 
-
+> declaration of a resolver using a expression language
 ```yml
     # Mutation.types.yml
     resolve: "@=service('app.resolver.informations').registerForThread(args)"
@@ -825,7 +896,7 @@ Second, it will handle the exceptions thrown in the resolvers. When it catches a
 - ErrorHandler::DEFAULT_USER_ERROR_CLASS
 
 These can be [configured](https://github.com/overblog/GraphQLBundle/blob/master/DependencyInjection/Configuration.php#L101) on your config.yml with your own exceptions: 
-
+> overiding the exception thrown on errors that can be sent to the user
 ```yml
 overblog_graphql:
     definitions:
@@ -848,4 +919,4 @@ I'm glad you made it. I had so many insights and struggles in the development pr
 
 Please let me know your opinions and how I can improve it. All suggestions are very welcome. In the architecture and in the post also. And please let me know if you have any doubts. 
 
-Thanks for reading this far. I hope I contibuted with your discoveries about GraphQL and for it's addoption by the PHP community. 
+Thanks for reading this far. I hope I contibuted with your discoveries about GraphQL and also with it's addoption by the PHP community. 
