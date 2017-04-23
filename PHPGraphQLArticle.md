@@ -238,9 +238,7 @@ These are only a small subset of the improvements I can see on GraphQL over REST
 
 #### PHP
 
-I usually use PHP and Symfony on the backend, so that was my natural choice. 
-
-So I went in a quest to see if I could find good libs in PHP to help on the job. And, lucky me, thanks fot these both projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I found mature libs that do their job in a excelent manner. 
+I usually use PHP and Symfony on the backend, so that was my natural choice to the server. I went in a quest to see if I could find good libs in PHP to help on the job. And, lucky me, thanks fot these both projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I found mature libs that do their job in a excelent manner. 
 
 I started using Youshido's lib and later migrated to Webonyx. To integrate with symfony, I used the [OverblogGraphQLBundle](https://github.com/overblog/GraphQLBundle). Having that GraphQL server layer in place, meanwhile I was evolving with the app, I tried a lot of layer compositions and code organizations to find a balanced and clean one. 
 
@@ -250,7 +248,7 @@ And that was a fantastic bonus to me. I was looking for a GraphQL server with th
 
 Talking about tests, another decision taken was to run most tests over the API layer, what also proved to be a very good decision. In fact, my working proccess of a new feature now allways starts from the schema going to the tests on the top of that schema. Those are the beginning step prior to actual implementation of the features.  
 
-I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. 
+To make our exploration of the architecture, I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. 
 
 After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
 
@@ -266,7 +264,7 @@ The mais screen, as shown below, is where you organize messages in specific thre
 
 ![Create a Thread and Tag it!](./images/createThread.gif)
 
-This App gives us interesting data structures to serve us as an example:
+We are going to work on a very simple example because our goal here is to explain about our architecture, but this App can give you interesting data structures to serve as an example to deeper study:
 
 1. A paginated list - Messages
 2. A non paginated list - Threads
