@@ -2,20 +2,19 @@
 
 # Introduction
 
-In this article we:
-
-* Give an introduction on GraphQL showing some of it's improvements over REST
-* Describe the architecture of a PHP GraphQL server used in an open source project
-* Show the development of a new feature in that server. 
-
 Have you heard about GraphQL? Facebook open sourced it on 2015 and IMHO it is a much better way to stablish contracts between clients that REST. The improvements achieved also allow better tools and technologies on both client and server. 
 
 If you are like me, allways looking for a better way to develop your apps, aiming to have the least boilerplate code and the most mainteinability, you will sure like to take a look at it.
 
-
 If you are considering to set up a GraphQL server in PHP, or if you just want to know more about this technology, you will probably like what you find here. 
 
-When I was studying to build this app, I felt that there were missing code examples on the community, especially in PHP, so I hope this can add to the PHP community addoption of GraphQL.
+In this article we:
+
+* Give an introduction on GraphQL, exemplifying it's improvements over REST
+* Describe the architecture of a full PHP GraphQL server.
+* Show the development of a new feature in that server. 
+
+The server we are going to study is of an app I have being developing these last months. When I was studying to build this app, I felt that there were missing code examples on the community for GraphQL servers, especially in PHP. So I decided to write this article and I hope it can add to the PHP community addoption of GraphQL.
 
 It's worth noticing the code we are going to explore is open sourced and you can also use it as your own foundation. In there you have a lot of code examples to look that might be usefull for your own study. 
 
@@ -23,7 +22,7 @@ As they say, **a repo is worth a thousand words**!
 
 - [PHP backend repository](https://gitlab.com/bruno.p.reis/nosso-jardim) with Symfony, Doctrine and Overblog GraphQL
 
-Don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" in a so fast evolving technology scenario, especially for GraphQL based libs, since it was released two year ago. But, I sure did a good work researching and finding better ways to do things.
+Don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" for a so recent technology in a so fast evolving scenario. But, I did a lot of research and refactorings on the code and I think you are gonna like the examples in there. 
 
 * BTW, the client application is also open sourced [here](https://gitlab.com/bruno.p.reis/nosso-jardim-client).
 
