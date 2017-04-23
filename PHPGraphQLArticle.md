@@ -20,7 +20,7 @@ It's worth noticing the code we are going to explore is open sourced and you can
 
 As they say, **a repo** ([PHP backend repository with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim)) **is worth a thousand words**!
 
-Don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" for a so recent technology in a so fast evolving scenario. But, I did a lot of research and refactorings on the code and I think you are gonna like the examples in there. 
+It's impossible to talk about "Best Practices" for a so recent technology in a so fast evolving scenario. But, I did a lot of research and refactorings on the code and I think you are gonna like the examples in there. 
 
 * BTW, the client application is also open sourced [here](https://gitlab.com/bruno.p.reis/nosso-jardim-client).
 
