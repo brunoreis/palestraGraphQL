@@ -18,9 +18,7 @@ The server we are going to study is of an app I have being developing these last
 
 It's worth noticing the code we are going to explore is open sourced and you can also use it as your own foundation. In there you have a lot of code examples to look that might be usefull for your own study. 
 
-As they say, **a repo is worth a thousand words**!
-
-- [PHP backend repository](https://gitlab.com/bruno.p.reis/nosso-jardim) with Symfony, Doctrine and Overblog GraphQL
+As they say, **a repo** ([PHP backend repository](https://gitlab.com/bruno.p.reis/nosso-jardim) with Symfony, Doctrine and Overblog GraphQL) **is worth a thousand words**!
 
 Don't take the example here as "Best Practices". It's impossible to talk about "Best Practices" for a so recent technology in a so fast evolving scenario. But, I did a lot of research and refactorings on the code and I think you are gonna like the examples in there. 
 
