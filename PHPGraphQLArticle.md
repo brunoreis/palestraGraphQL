@@ -24,11 +24,11 @@ It's impossible to talk about "Best Practices" for a so recent technology in a s
 
 * BTW, the client application is also open sourced [here](https://gitlab.com/bruno.p.reis/nosso-jardim-client).
 
-### Decisions taken
+### Grounds
 
-I'll explain how I got to this architecture before getting into the code, so that you understand the driving forces behind it. 
+To understand an architecture, it's important to know it's grounds. I'll explain how I got to this architecture before getting into the code, so that you understand the driving forces behind it. 
 
-I was already using React in my frontends. And was very happy with it. My apps were getting a lot clener on the view because of React's paradigm. **It's beauty lies in the fact that you always have a predictable view for a specific model state.** The hadaches with a lot of binds and listeneres are mostly gone and the result is clean and predictable code.
+I was already using React in my frontends and was very happy. My apps were getting a lot clener on the view because of React's paradigm. **It's beauty lies in the fact that you always have a predictable view for a specific model state.** The hadaches with a lot of binds and listeneres are mostly gone and the result is clean and predictable code.
 
 To manage state, React requires another lib and I was using one of the most addopted ones, called Redux. React and Redux make a great pair for frontend development. Since I began using them, I don'r remember one day I lost time tracking for the cause of an unexpected behaviour on the view. 
 
