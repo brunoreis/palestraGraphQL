@@ -36,7 +36,7 @@ But, even with all those strong points, there was a fundamental missing one. Som
 
 So, I was looking for a way to integrate data into my React Frontend. I tried Relay, but I did not made good progress, due to their docs at that time. Sometime latter then I met ApolloJS. Apollo is a GraphQL client, built by the Meteor Development Group. It's a data client that runs with your JS application and is responsible to manage the data and data integration with the server.
 
-#### Apollo
+### Apollo
 
 IMHO, [Apollo](http://dev.apollodata.com/) does his job in an excelent way. It has great documentation, very active slack channels and a growing community. It has a great set of well implemented features like queries, caching, mutations, optimistic UI, subscriptions, pagination, server-side rendering, prefetching, and more.
 
@@ -50,7 +50,7 @@ Apollo is a nice improvement over tradicional client server communication libs. 
 
 So, to learn Apollo, my learning journey also required me to learn GraphQL. 
 
-#### GraphQL
+### GraphQL
 
 [GraphQL](http://graphql.org/learn/) is a client query language and server spec that facebook has being useing since 2012 and open sourced in 2015. GraphQL puts a lot of control on the client, allowing the client to make queries that specify the fields it wants to see and also the relations it wants. This saves us a lot of requests while calling the server.  
 
@@ -236,7 +236,7 @@ So, in practice, we don't need to do anything different to return the post than 
 
 These are only a small subset of the improvements I can see on GraphQL over REST. I hope they are enought to encourage your reading of this article. In the following sections, looking at a real world example, you will sure be able to understand a lot more about GraphQL and it's benefits. 
 
-#### PHP
+### PHP
 
 I usually use PHP and Symfony on the backend, so that was my natural choice to the server. I went in a quest to see if I could find good libs in PHP to help on the job. And, lucky me, thanks fot these both projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I found mature libs that do their job in a excelent manner. 
 
@@ -252,7 +252,9 @@ To make our exploration of the architecture, I'll guide you through the App in t
 
 After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
 
-### The App 
+# Hands On
+
+### The App We are Going to Work With
 
 The view is usually the easiest part to understand an application domain. So let's look at it before we install the backend and look at it's API. 
 
@@ -275,7 +277,7 @@ We are going to work on a very simple example because our goal here is to explai
 These examples are all on the repository and can demonstrate with code how to handle these data structures on both front and backend. 
 
 
-### Installation
+### Installing the Code on Your Machine
 
 Code and images are available through the article. But, I encourage you to clone the repo anyway, to play with it and look at the rest of the code available there. 
 
@@ -287,7 +289,7 @@ Code and images are available through the article. But, I encourage you to clone
 
 TODO: rewrite readme in english to help these steps
 
-## The Development Cycle
+### Development Cycle
 
 This are the steps I usually take when I add a new functionality to the system:
 
@@ -297,7 +299,7 @@ This are the steps I usually take when I add a new functionality to the system:
 4. Making test pass - Improving the schema and the resolver
 5. Refactor
 
-### Defining the functionality
+### Defining the Functionality We Are Going to Add
 
 Our task will be taking this: 
 > This is the form where we add a tag to a thread. There is only a single combo where the user can select the tag. 
@@ -371,7 +373,7 @@ Our schema is created. Before we actually implement the saving of that data, wha
 
 The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
 
-### Writing tests
+### Writing Tests to Describe What We Want
 
 Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. 
 
@@ -532,7 +534,7 @@ that was made through JsonPath into the response that came fron the GraphQL laye
 
 Nice. Now that you know how tests are working, let's test for the new field we are going to add. 
 
-#### Writting our test
+#### Writting Our Test
 
 We will register an information with data in the 'about' field. After that we will load that thread back, query that field's value and assert it is equal to the original string. 
 
@@ -567,7 +569,7 @@ We will register an information with data in the 'about' field. After that we wi
 
 Now, let's follow in a TDD way, running the test, making it fail, and answering to it's requests. 
 
-### Making test pass - Improving the schema and the resolver
+#### Making It Pass - Improving The Schema And The Resolver
 
 Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it there. 
 
@@ -667,9 +669,9 @@ And then, we get the very wanted green message we were waiting for passing the t
 > I encourage you to open SubtopicsTestHelper and follow and understand the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). 
 > There you will be able to see the GraphQL call happening and the json path component being wrapped in the returning funcion. 
 
-### Refactor
+### Refactor - Time To Recap And See What Can Be Improved
 
-#### Observe
+#### Observe What We Have Done So Far
 
 Having our green lights on, it's time for some retrospective on what we've done so far. Going to a higher to a lower level, lets talk first about the proccess. 
 
@@ -701,7 +703,7 @@ Nice!
 
 I strongly advocate toward this direction of development from business to technical details.  
 
-#### Improve 
+#### Improve To Use Mutation Results
 
 So far our test runs the *informationRegisterForThread* mutation and then uses the *thread* query to check for the inserted data. But, mutations can also return data. In fact, if we look carefully at them, mutations are identical to other queries. They have a return type and can specify the format of the returned data. 
 
@@ -750,6 +752,8 @@ But, let's say we want a little more. We want to know which information was inse
 
 We could return the information instead of returning the thread. But, that could not be our need, since we could have some changes on the thread also. 
 Well, a good news now. We don't need to return only the domain types we have so far. We can create specific types for our mutation returns. 
+
+#### Creating a Specific Type to Our Mutation's Result
 
 Indeed, I was reading this article on [how to design mutations](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) and it enforces that a mutation should allways bake it's own type to return. And, in fact, that makes a lot of sense to me since we create a schema that's more flexible and has a good extension point. Adding a field on a return type, let's say, *InformationRegisterForThreatReturn*, is a lot easier then changing a mutation return type. 
 
@@ -813,7 +817,7 @@ Now that you already should have a good grasp on the architecture and how to lay
 
 Long life to GraphQL!
 
-## Big Components
+#### Big Components Overview
 
 So, now that we dived in the system adding this functionality, we can have a better view of the big components of our architecture: 
 
@@ -837,7 +841,7 @@ So, now that we dived in the system adding this functionality, we can have a bet
 
 **The Data Layer**, specific to your application. 
 
-## Extra pieaces. 
+# Other Important Information To Use This Architecture
 
 In the last Section, "The Development Cycle", I explained how this architecture works in a dynamical way. In this section I'll add some extra details about specific libs and configurations I fell are important to explain this architecture to you.
 
@@ -859,7 +863,7 @@ The bundle also implement endpoints, improve error handling and add some other t
 
 That's a major lib in my opinion because it adds usability and readability to the GraphQL lib and was, along with the expression language, the reason I decided to migrate from Youshido's lib. 
 
-### The Schema Declaration - The entrance to the backend
+### The Schema Declaration - Entrance To The Backend
 
 Our schema declaration is under src/AppBundle/Resources/config/graphql/
 Queries are defined in the Query.types.yml and mutations on Mutations.types.yml. 
