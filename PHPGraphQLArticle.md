@@ -54,9 +54,9 @@ So, to learn Apollo, my learning journey also required me to learn GraphQL.
 
 [GraphQL](http://graphql.org/learn/) is a client query language and server spec that facebook has being useing since 2012 and open sourced in 2015. GraphQL puts a lot of control on the client, allowing the client to make queries that specify the fields it wants to see and also the relations it wants. This saves us a lot of requests while calling the server.  
 
-The language is also strongly typed and introspective. This allows the validation of the request payloads and responses in the GraphQL layer, imposing a very good contract between client and server. The introspective nature of it allows for custom development tools to build great API documentation with very few human interaction. Indeed all we need is to put good description fields. 
+The language is also strongly typed and introspective. This allows the validation of the request payloads and responses in the GraphQL layer, imposing a very good contract between client and server. The introspective nature of it allows for custom development tools to build great API documentation with very few human interaction. Indeed all we need is to put good description fields in a schema that is part of the development process, required to expose the API. 
 
-In the proccess of building the server, I also found out that the GraphQL model imposes a very nice server architecture that has similar driving forces puttin our focus more on the business logic and less on boilerplate code. 
+While building the server, I also found out that the GraphQL model imposes a very nice server architecture, allowing our focus to be more on the business logic and less on boilerplate code. 
 
 GraphQL has being evolving so fast that in this short period of time it already has implementations in JS, Ruby, Python, Scala, Java, Clojure, GO, PHP, C# / .NET and other languages. It also has a great ecosystem growing around it even with serverless services being ofered using it as an interface. 
 
@@ -64,9 +64,9 @@ My opinion is that it has being a long time that community was waiting for somet
 
 Of course REST was developed a long time ago (in SW chronology). But I also believe that GraphQL's origin, being developed inside a big company like FB, evolving being tested against real world scenarios and just then being open sourced, also coontributes to it's robustness and excelent fit to modern apps.
 
-#### Some GraphQL improvements over REST
+#### Some of the GraphQL improvements over REST (IMHO)
 
-I'll make a small parenthesis here to explain a little more why I've liked so much the GraphQL approach. Let's see it in practice. 
+I'll make a small parenthesis here to explain a why I've liked so much the GraphQL approach. Let's see it in practice. 
 
 Imagine you want to retrieve a list of posts from a user using REST. You would probably access and endpoint like: 
 
@@ -77,7 +77,7 @@ http://mydoma.in/api/user/45/posts
 What information does that gives us? What data will come from that request? We don't have a way to know it unless we look at the code or add documentation over that, using a tool Swagger. So, you need to install another tool, learn it and add a new activity to your development cycle that is mantaining a swagger file.
 
 Now, let's look at the same query in GraphQL: 
-
+> GraphQL querying the posts field of the Query "namespace" with an operation named "UserPosts"
 ```graphql
 query UserPosts{
     posts(userId:45) {
@@ -90,11 +90,13 @@ query UserPosts{
 }
 ```
 
-So, look at this. That is only our query! Notice how much information we can grab from there. But, that's not all GraphQL has to offer. Indeed, this is just the beggining. 
+So, look at this query! The query describes the arguments sent, and also the fields that are required. It's a lot cleaner to us what information will be returned from the server.
 
-GraphQL usually has only one endpoint, and we make all requests there specifying queries like this. The server defines a schema that list the queries, it's possible arguments and return types. The schema of our example, defining the "posts" query, would be something like this: 
+GraphQL usually has only one endpoint, and we make all requests there specifying queries like this. to know what queries are available, we define a schema on the server. The server defines a schema that list the queries, it's possible arguments and return types. 
 
+The schema of our example, defining the "posts" query, would be something like this: 
 
+> GraphQL schema, defined on the server, showing the available queries, it's arguments, possible fields and also defining resolvers, that are methods to resolve that query 
 ```yml
 # Queries.types.yml
 # ...
@@ -137,9 +139,11 @@ So this schema has a lot to declare:
 
 It's similar to an Swagger file, right? But, it's part of our system. Part of our development proccess is to declare that schema. This is one big improvement over REST: 
 
-*documentation is generated in the development proccess*
+*documentation is generated in the development process*
 
-What else? Let's imagine now we need to access this same service from a mobile device to make a very simple and optimized list of all posts. We just need two fields, title and id. How would you do that in REST? Well, you probably would need to pass a parameter to specify this return type and code it inside your controller, putting a switch of if somewhere.
+Documentation generated in the process is for sure, more trustable regarding it's "uptodatiness". 
+
+Let's imagine now we need to access this same service from a mobile device to make a very simple and optimized list of all posts. We just need two fields, title and id. How would you do that in REST? Well, you probably would need to pass a parameter to specify this return type and code it inside your controller, putting a switch of if somewhere.
 
 In GraphQL, all you need is to change the query to say what fields you need. 
 
@@ -222,7 +226,7 @@ And, more than that, I declared on the parenthesys after the comments field that
 
 *You are even able to pass arguments to every field or relation inside a query.*
 
-And the query is a lot easier to understand than those cumbersome rest calls above, we can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. 
+And the query is a lot easier to understand than those cumbersome REST calls above, we can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. 
 
 In the server, it is also very nice to implement. Indeed, the resolver there does not need to know that we will want that nesting. I mean, it does not need to know we want the post WITH the comments. Because the comments have their own resolver and the GraphQL layer will call it on demand. 
 
@@ -230,8 +234,7 @@ So, in practice, we don't need to do anything different to return the post than 
 
 *So, server code gets cleaner and well organized.* 
 
-These are only a small subset of the improvements I can see on GraphQL over REST. I hope they are enought to encourage your reading of this article. In the following paragraphs you will sure be able to understand a lot more about GraphQL. 
-
+These are only a small subset of the improvements I can see on GraphQL over REST. I hope they are enought to encourage your reading of this article. In the following sections, looking at a real world example, you will sure be able to understand a lot more about GraphQL and it's benefits. 
 
 #### PHP
 
