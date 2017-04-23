@@ -843,13 +843,15 @@ So, now that we dived in the system adding this functionality, we can have a bet
 
 # Other Important Information To Use This Architecture
 
-In the last Section, "The Development Cycle", I explained how this architecture works in a dynamical way. In this section I'll add some extra details about specific libs and configurations I fell are important to explain this architecture to you.
+In the last Section, "The Development Cycle", I explained how this architecture works in a dynamical way. If your only goal with this article was to understand a PHP GraphQL server, maybe you can stop here. But if you want to know more details about this architecture and it's implementation, please read on. 
+
+In this section I'll add some extra details about specific libs and configurations.
 
 ### Overblog GraphQL 
 
 To build the GraphQL server over symfony, we are using the Overblog GraphQL [Bundle](https://github.com/overblog/GraphQLBundle).
 
-It's a very good lib that integrate the GraphQL lib into symfony adding nice features to it. 
+It integrates the Webonyx GraphQL lib into a Symfony bundle, adding nice features to it. 
 
 One very special feature it has is the [Expression Language](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/expression-language.md). You can use it to declare the resolvers, specifying what service to use, what method to call and what args to pass like in the string below. 
 
@@ -861,7 +863,7 @@ One very special feature it has is the [Expression Language](https://github.com/
 
 The bundle also implement endpoints, improve error handling and add some other things over the Webonyx GraphQL lib. One nice lib it requires is the overblog/graphql-php-generator that is responsible by reading a nice and clean yml and convert it into the GraphQL type objects. It will all happen under the hood and all you will need to touch is the yml and the resolvers. 
 
-That's a major lib in my opinion because it adds usability and readability to the GraphQL lib and was, along with the expression language, the reason I decided to migrate from Youshido's lib. 
+It adds usability and readability to the GraphQL lib and was, along with the expression language, the reason I decided to migrate from Youshido's lib. 
 
 ### The Schema Declaration - Entrance To The Backend
 
@@ -872,9 +874,9 @@ The resolvers are nicely defined there with the expession language we've talked 
 
 This file is the entrance on our system. It defines the API interface with the outter word. 
 
-### Cors
+### Disabling Cors to Test on Localhost
 
-This app is not on a prod server yet, but I intend to keep the server in a different env, so I installed the [NelmioCorsBundle|https://github.com/nelmio/NelmioCorsBundle]
+This app is not on a prod server yet, but to test it on localhost, I usually run the client on one port and the server on another, and I got some cors verification errors, so I installed the [NelmioCorsBundle|https://github.com/nelmio/NelmioCorsBundle] to allow that. 
 
 The configurations today are very open and will need to be a lot more string on a prod server. But, I just wanted you to note that it's running and will help you to avoid a lot of errors seen on the frontend client. 
 
@@ -882,9 +884,9 @@ It's also worth noticing that I had to add 'content-type' as an allowed header i
 
 If you don't know this bundle yet, it's worth taking a look at it. It will manage the headers sent and specially the OPTIONS pre-flight requests to enable cross origin resource sharing. In other words, will enable you to call your API from a different domain.
 
-### Error Handling
+### Error Handling - Raising Messages to The Final User
 
-The last missing topic I'm gonna touch is error handling. This is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. 
+This is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. 
 
 And, as we can see by the community, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
 
