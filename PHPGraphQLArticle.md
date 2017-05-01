@@ -2,7 +2,7 @@
 
 # Introduction
 
-Have you heard about GraphQL? Facebook open sourced it in 2015 and I believe it is a much better way to establish contracts between clients than REST (or 'it is a much better way to interact between software components than REST'). These improvements also allow better tools and technologies on both the client and server side. 
+Have you heard about GraphQL? Facebook open sourced it in 2015 and I believe it is a much better way to establish contracts between a client and a server than REST. The achieved improvements also serve as a foundation to better tools and technologies on both the client and server side. 
 
 If, like me, you are always searching for the least boilerplate and most maintainable code, you should consider GraphQL.
 
@@ -16,7 +16,7 @@ The example we will use is of of an app I recently developed. While studying to 
 
 It's worth noting that both the code and the [application](https://gitlab.com/bruno.p.reis/nosso-jardim-client) (we are going to explore is open source so you can use it as your own foundation for your own work. As they say, **a repo** ([PHP backend repository with Symfony, Doctrine and Overblog GraphQL](https://gitlab.com/bruno.p.reis/nosso-jardim)) **is worth a thousand words**!
 
-'Best Practices' are a moving target with such a quickly evolving technology, but I have thoroughly researched and refactored any code used in this article.
+'Best Practices' are a moving target with such a quickly evolving technology, but I have thoroughly researched and refactored any code used in this article and I believe it can serve as a good example to you.
 
 ### Background
 
