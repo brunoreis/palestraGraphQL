@@ -82,15 +82,13 @@ query UserPosts{
 }
 ```
 
-This query describes the arguments sent, and also the fields that are required. It's a lot clearer what information will be returned from the server.
+The above query describes the arguments sent, the required fields and is a lot clearer on what information will be returned from the server
 
-END OF JP REVISION 1
+GraphQL usually has only one endpoint and we make all requests there with queries like this. To find out what queries are available, we define a schema on the server. The server defines a schema that list the queries, it's possible arguments and return types. 
 
-GraphQL usually has only one endpoint, and we make all requests there specifying queries like this. to know what queries are available, we define a schema on the server. The server defines a schema that list the queries, it's possible arguments and return types. 
+The schema from our example above would look something like this: 
 
-The schema of our example, defining the "posts" query, would be something like this: 
-
-> GraphQL schema, defined on the server, showing the available queries, it's arguments, possible fields and also defining resolvers, that are methods to resolve that query 
+> A GraphQL schema, defined on the server, showing the available queries, its arguments, possible fields and also defining resolvers.
 ```yml
 # Queries.types.yml
 # ...
@@ -131,17 +129,13 @@ So this schema has a lot to declare:
 * How to resolve that query. In the example, a service method (find) is called with the passed args
 * It also declares the Post type, with strong typed fields
 
-It's similar to an Swagger file, right? But, it's part of our system. Part of our development proccess is to declare that schema. This is one big improvement over REST: 
+It's similar to an Swagger file, right? But, here part of our development proccess is to declare that schema. This is a big improvement over REST: *Documentation generated within the process is far more reliable for 'up-to-dateness'.*
 
-*documentation is generated in the development process*
+Let's imagine now that we need to access this same service from a mobile device to make a simple list of all posts. We just need two fields: title and id. 
 
-Documentation generated in the process is for sure, more trustable regarding it's "uptodatiness". 
+How would we do that in REST? Well, we probably would need to pass a parameter to specify this return type and code it inside our controller. In GraphQL, all we need to update is the query to say what fields are needed. 
 
-Let's imagine now we need to access this same service from a mobile device to make a very simple and optimized list of all posts. We just need two fields, title and id. How would you do that in REST? Well, you probably would need to pass a parameter to specify this return type and code it inside your controller, putting a switch of if somewhere.
-
-In GraphQL, all you need is to change the query to say what fields you need. 
-
-> This is a query to the posts field in the query namespace. It defines the *userId* argument and also defines the fields it will need: *id* and *title*
+> This is a query to posts field in the query namespace. It defines the *userId* argument and the fields it will need: *id* and *title*
 
 ```graphql
 query UserPosts{
@@ -152,43 +146,39 @@ query UserPosts{
 }
 ```
 
-That will return an array of posts with only those two fields: id and title. So we got to annother improvement over rest here: 
+This will return an array of posts with only those two fields: id and title. So we got to annother improvement over REST here: *In GraphQL the client can specify in the query what fields are needed so only those are returned in the response.*
 
-*In GraphQL the client can specify in the query what fields are needed and only those will be returned on the response.*
-
-Now, let's move into another direction and think that we need more info. We are looking at a list of articles and we want to see those articles and the last 5 comments on them. In rest, we could do something like: 
+Let's consider another scenario. We are looking at a list of articles and want to the last 5 comments for each of them. In REST, we could do something like: 
 
 > requesting the posts of the user 45 using REST
 ```
 http://mydoma.in/api/user/45/posts    
 ```
 
-plus a lot of calls like: 
-
-> requesting the comments of each post
+> and then requests each post to grab the comment list of all posts returned
 ```
 http://mydoma.in/api/post/3/comments?last=5
 http://mydoma.in/api/post/4/comments?last=5
 http://mydoma.in/api/post/7/comments?last=5    
 ```
 
-to grab the comment list of all posts returned. Or maybe we could develop a specific endpoint:
+Maybe we could develop a specific endpoint:
 
-> A "not pure" rest endpoint. Please notice there is no standard on that. 
+> A "non pure" rest endpoint. There is no standard for this. 
 ```
 http://mydoma.in/api/user/45/postsWithComments?lastComments=5
 ``` 
 
-Or a customization on that one:
-> This would change the same endpoint as we've seen before, adding the parameter with=comments that would tell that endpoint to nest the comments into the posts. Please notice this would require changes on the service. 
+> We could add the parameter with=comments to tell that endpoint to nest the comments into the posts. This would require changes on the service. 
 ```
 http://mydoma.in/api/user/45/posts?with=comments&lastComments=5
 ``` 
 
-To me, all those solutions are cumbersome. I feel like I have spent too much time on my life coding a server response only to fullfill a specific return format. 
+All these solutions,which each require coding a server response only to fullfill a specific return format, are cumbersome.
 
 Now let's look at how we can do this in GraphQL:
-> Querying the posts field on the query namespace. We pass the argument userId==45 to say we want the posts of that user. We also pass all the required fields (*id*,*title*,*text*,...). 
+> Querying the posts field on the query namespace. We pass the argument userId==45 to say we want the posts of that user. 
+> We also pass all the required fields (*id*,*title*,*text*,...). 
 > One of these fields, *comments* is an object field, and that tells GraphQL to include that relation on the response. 
 > Please, notice that even this field receive it's argument (last==5)
 
@@ -212,55 +202,49 @@ query UserPosts{
 }
 ```
 
-So sweet! I just needed to add the relation called "comments" to my query. 
+All I needed to do was add "comments" to my query. 
 
 *In a GraphQL query you can nest the fields you need, even if they are relations.* 
 
-And, more than that, I declared on the parenthesys after the comments field that I need the last 5 comments there. Even the naming got better because I did not need to come up with a weird 'lastComments' argument name. So..
+I also declared, in the parenthesys after the comments field, that I needrf the last 5 comments there. The naming is clearer because I did not need to come up with a weird 'lastComments' argument name. 
 
 *You are even able to pass arguments to every field or relation inside a query.*
 
-And the query is a lot easier to understand than those cumbersome REST calls above, we can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. 
+The query is a lot easier to understand than those cumbersome REST calls above. We can look at it and see that we want the posts from user 45, and the last 5 comments of each post with the id and name of the user of each comment. Simple.
 
-In the server, it is also very nice to implement. Indeed, the resolver there does not need to know that we will want that nesting. I mean, it does not need to know we want the post WITH the comments. Because the comments have their own resolver and the GraphQL layer will call it on demand. 
+In the server, it is also very easy to implement. The resolver there does not need to know we want the post WITH the comments. This is because the comments have their own resolver and the GraphQL layer will call it on demand. 
 
-So, in practice, we don't need to do anything different to return the post than what we need to do to return it nested with it's comments. 
+In short, we don't need to do anything different to return the post than when we return it nested with it's comments. 
 
 *So, server code gets cleaner and well organized.* 
 
-These are only a small subset of the improvements I can see on GraphQL over REST. I hope they are enought to encourage your reading of this article. In the following sections, looking at a real world example, you will sure be able to understand a lot more about GraphQL and it's benefits. 
+In the following sections, where we look at a real world example, you will start understanding the deeper intricacies of GraphQL.
 
 ### PHP
 
-I usually use PHP and Symfony on the backend, so that was my natural choice to the server. I went in a quest to see if I could find good libs in PHP to help on the job. And, lucky me, thanks fot these both projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I found mature libs that do their job in a excelent manner. 
+I usually use PHP and Symfony on the backend, so that was my natural choice for this server. I went hunting to see if I could find any good libs in PHP. Thanks to these projects ([1](https://github.com/webonyx/graphql-php),[2](https://github.com/Youshido/GraphQL)) I have access to some mature libs. 
 
-I started using Youshido's lib and later migrated to Webonyx. To integrate with symfony, I used the [OverblogGraphQLBundle](https://github.com/overblog/GraphQLBundle). Having that GraphQL server layer in place, meanwhile I was evolving with the app, I tried a lot of layer compositions and code organizations to find a balanced and clean one. 
+I started using Youshido's lib but later migrated to Webonyx. To integrate with Symfony, I used the [OverblogGraphQLBundle](https://github.com/overblog/GraphQLBundle). Having that GraphQL server layer in place, meanwhile I was evolving with the app, I tried a lot of layer compositions and code organizations to find a balanced and clean one. ISSUES WITH THIS PARA
 
-After a lot of refining, I was then able to come up with a simple way to structure the app, putting most of my focus on the business. This structure looks even better to me than tradicional ones with controllers and routes. 
+I was then able to come up with a simple way to structure the app. This was huge benefit as I was looking for a GraphQL server whose sole purpose was to serve frontend - but I found much more. A good code structure that is easily testable and very well documented. 
 
-And that was a fantastic bonus to me. I was looking for a GraphQL server with the only purpose to serve the frontend, but found a lot more. A good code structure, easily testable, and very well documented by default. 
+Lets continue with our exploration of the architecture. I'll guide you through the App in the same order I would when developing a new feature.
 
-Talking about tests, another decision taken was to run most tests over the API layer, what also proved to be a very good decision. In fact, my working proccess of a new feature now allways starts from the schema going to the tests on the top of that schema. Those are the beginning step prior to actual implementation of the features.  
-
-To make our exploration of the architecture, I'll guide you through the App in the same order I use to develop a new feature. So that you can understand the app and also the proccess that is working fine for me. 
-
-After we see a complete development cycle we will also take a look at some technical details. In special those required to integrate the libs we are using together. 
+Once we have covered a complete development cycle we will also take a look at some technical details. 
 
 # Hands On
 
 ### The App We are Going to Work With
 
-The view is usually the easiest part to understand an application domain. So let's look at it before we install the backend and look at it's API. 
+We are going to work on a Knowledge Management App. The main purpose of this app is to organize knowledge that is shared through Telegram. 
 
-We are gonna work on a Knowledge Management App. The main purpose of this app is to organize knowledge that is shared through Telegram and other channels in the future. 
+The main screen, as shown below, is where we organize messages, in specific threads or conversations, and put tags on those threads. 
 
-The mais screen, as shown below, is where you organize messages in specific threads or conversations and put tags on those threads. 
-
-> In this animation, the user is selecting 9 messages and creating a thread. After that, he goes to the created thread and add a tag to classify that thread as a SQL thread. 
+> In this animation, the user is selecting messages, creating a thread and adding a tag.
 
 ![Create a Thread and Tag it!](./images/createThread.gif)
 
-We are going to work on a very simple example because our goal here is to explain about our architecture, but this App can give you interesting data structures to serve as an example to deeper study:
+We are going to cover a very simple example because our goal here is simply to explain the architecture.If you are interest in diving deeperm this App can give you some other data structures to study:
 
 1. A paginated list - Messages
 2. A non paginated list - Threads
@@ -270,10 +254,9 @@ We are going to work on a very simple example because our goal here is to explai
 
 These examples are all on the repository and can demonstrate with code how to handle these data structures on both front and backend. 
 
-
 ### Installing the Code on Your Machine
 
-Code and images are available through the article. But, I encourage you to clone the repo anyway, to play with it and look at the rest of the code available there. 
+Code and images are available through the article. But, I encourage you to clone the repo and look at the rest of the code. 
 
 1. [Clone the backend repo.](https://gitlab.com/bruno.p.reis/nosso-jardim)
 2. Run composer install and configure your parameters
@@ -281,16 +264,15 @@ Code and images are available through the article. But, I encourage you to clone
 4. Start the PHP server
 5. Read the next section so that you can look at GraphiQL knowing the app
 
-TODO: rewrite readme in english to help these steps
 
 ### Development Cycle
 
-This are the steps I usually take when I add a new functionality to the system:
+These are the steps I usually take when I add any new functionality to a system:
 
-1. Define the functionality
-2. Define the Schema
+1. Define functionality
+2. Define Schema
 3. Write test(s)
-4. Making test pass - Improving the schema and the resolver
+4. Make test pass - Improving the schema and the resolver
 5. Refactor
 
 ### Defining the Functionality We Are Going to Add
@@ -300,17 +282,17 @@ Our task will be taking this:
 <img src="./images/tagFormBefore.png" width="600">
 
 And turning into this: 
-> We will add a text field to add extra information about that to help indexing that thread into that tag. 
+> We will add a text field to help indexing into the tag. 
 <img src="./images/tagFormAfter.png" width="600">
 
-So  we are goint to add extra information about the classification (tagging) of a thread in a specific subtopic. 
+We are going to add extra information about the classification (tagging) of a thread in a specific subtopic. 
 
-Let's look at GraphiQL. GraphiQL is a tool where you can see the documentation of a GraphQL server and also run queries and mutations in it. If you started the server it should be running under 127.0.0.1:8000/graphiql or any similar location. 
+GraphiQL is a tool where you can see the documentation of a GraphQL server and also run queries and mutations in it. If you started the server it should be running under 127.0.0.1:8000/graphiql.
 
-Let's see the mutation that is used to insert an Information. Information is an entity in our system. It's the relationship between a Thread and a Subtopic. You can also understand it as a tag. 
+Let's see the mutation that is used to insert Information (which is an entity in our system). It's the relationship between a Thread and a Subtopic. You can also understand it as a tag. 
 
 The mutation is called "informationRegisterForThread". 
-> This is the schema of that mutation field, as seen in the graphiQL tool. This is auto-generated and readly available as soon as you write the schema. Since writing the schema is a main part of the development proccess, you allways will have an up to date documentation on your API. 
+> This is the schema of that mutation field, as seen in the graphiQL tool. This is auto-generated and readly available as soon as you write the schema. Since writing the schema is a main part of the development proccess, you will always have up to date documentation on your API. 
 <img src="./images/informationRegisterForThreadBefore.png" width="400">
 
 You can see it expects a required id (ID!) and also an InformationInput object. If you click on that InformationInput, you will see it's schema: 
@@ -318,6 +300,8 @@ You can see it expects a required id (ID!) and also an InformationInput object. 
 <img src="./images/informationInputBefore.png" width="400">
 
 > BTW, I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
+
+END JP REV 2
 
 It might seem funny or unnecessary to have a nested InformationInput object into those args. Specially because it now contains only one subtopicId field. This is, indeed, a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
 
