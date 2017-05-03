@@ -301,9 +301,7 @@ You can see it expects a required id (ID!) and also an InformationInput object. 
 
 > BTW, I like putting the noun before the verb in order to aggregate mutations on the docs. That's a workaround I've found due to the non nested characterist of mutations. 
 
-END JP REV 2
-
-It might seem funny or unnecessary to have a nested InformationInput object into those args. Specially because it now contains only one subtopicId field. This is, indeed, a good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
+It might seem nnecessary to have a nested InformationInput object into those args, specially because it now contains only one subtopicId field. This is, however, good practice when [designing a mutation](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) because you reserve names for future expansion of the schema and also simplify the API on the client. 
 
 And this will help us now. 
 
@@ -343,31 +341,33 @@ We have added the 'about' field. We also improved docs with 'description' fields
 > Now we can see the added *about* field and also an improved description.
 <img src="./images/informationInputAfter.png" width="400">
 
-If you click on "about" and "subtopicId", you will be able to read the descriptions added for those fields. Ain't that beautiful? We are writting our app and writting our API docs at the same time in the exact same place. Cool!
+If you click on "about" and "subtopicId", you will be able to read the descriptions added for those fields. We are writting our app and writting our API docs at the same time in the exact same place!
 
 Now we may add a new field 'about' when calling our mutation. Since our new field is not mandatory, our app should still be running just fine. 
 
 Our schema is created. Before we actually implement the saving of that data, what about a little TDD? 
 
-The scema is easily visible on the frontend and I feel it's ok to write it without any tests. But the resolver action is something that sure deserves a test to help us move faster. 
+The schema is easily visible on the frontend and it's ok to write it without testing. The resolver action should be tested though, so let's look at that.
 
-### Writing Tests to Describe What We Want
+### Writing Tests
 
-Most of my tests run against the GraphQL layer. Doing so, so they also test the schema because if some wrong data is sent, errors will be returned. 
-
-To run the test, I'm needing to clear the cache everytime, so I'm running this line: 
+Most of my tests run against the GraphQL layer because, this way, they also test the schema. When incorrect data is sent, errors are returned. To run the test correctly, you should clear the cache everytime. 
 
 ```
 bin/console cache:clear --env=test;phpunit tests/AppBundle/GraphQL/Informations/Mutations/InformationRegisterForThreadTest.php
 ```
 
-#### Understanding the test and their helpers
+#### Understanding the test 
 
-We already have a test in place for that Mutation. Let's look at it to align our understanding on how we are testing: 
+Let's look at the test we have in place:
 
-> This test does not require a fixture. It create all it's required data. It create two subtopics (tags) and create 3 threads. The createThread will create dummy messages and add them to threads. After that it will add informations to the thread. Informations are the relations between a thread and a subtopic. AKA tag. 
+> This test does not require a fixture. It create all its required data: two subtopics (tags) and 3 threads. The createThread will create dummy messages and add them to threads. After that it will add information to the thread. Information is the relation between a thread and a subtopic. AKA tag. 
+
 > After that it will read the thread informations and assert that two informations were inserted for thread with id *$t1*. And will also make some other assertions. 
-> The upper cased methods are the ones that will make direct calls to the GraphQL queries and mutations. 
+CARLOS: whhen you say 'informations' do you mean 'information' or some specific code item called 'informations'. Because information in singular not plural so I'm getting confused.
+
+
+> The upper case methods are the ones that will make direct calls to the GraphQL queries and mutations. 
 
 ```php 
     # Tests\AppBundle\GraphQL\Informations\Mutations\InformationRegisterForThreadTest
@@ -420,11 +420,11 @@ We already have a test in place for that Mutation. Let's look at it to align our
 */ 
 ```
 
-Let's write our test to add the 'about' data in our query and see if it's value is returned back when we read the thread nested with the information object field.
+Let's write our test to add the 'about' data into our query and see if its value is returned back when we read the thread.
 
-The helper (InformationTestHelper) is responsible by calling the queries on the GraphQL layer and return a function. It returns a function so that we can call it with a json path to grab what we need. This pattern, function returning a function, may seem a little tricky at first, but it pays the cost with the clarity we get from it. 
+The helper (InformationTestHelper) is responsible for calling the queries on the GraphQL layer and returning a function. It returns a function so that we can call it with a json path to grab what we need. This pattern, function returning a function, may seem a little tricky at first, but it is worth using because of the clarity we get from its output.
 
-Let's refactor a little and you will see what I'm talking about: 
+If we refactor a little, you will see what I'm talking about: 
 
 > The fixture creation is refactored into *createThreadsAndSubtopics*. 
 > The call to THREAD, with id==$t1, returns a function that we call again passing 3 path strings. That will return those 3 values as an array that we then assign to *$informations*, *$s1ReadId* and *$s2ReadId* using the *list* function. 
@@ -508,15 +508,15 @@ in response to the query
 ```php
 'thread.informations.1.subtopic.id'
 ``` 
-that was made through JsonPath into the response that came fron the GraphQL layer. This syntax is a little tricky, I know. But it pays in legibility when you understand it. So please read it again if you feel you still missing some understanding.
+that was made through JsonPath into the response that came fron the GraphQL layer. This syntax is a little tricky.
 
-Nice. Now that you know how tests are working, let's test for the new field we are going to add. 
+Now let's test for the new field we are going to add. 
 
 #### Writting Our Test
 
-We will register an information with data in the 'about' field. After that we will load that thread back, query that field's value and assert it is equal to the original string. 
+We will register an information (again this information issue) with data in the 'about' field. After that we will load that thread back, query that field's value and assert it is equal to the original string. 
 
-> In this test we use the *creteThreadsAndSubtopics* to create some data. After that we call the informationRegisterForThread field in the mutation object defined in our schema. We do that using the INFORMATION_REGISTER_FOR_THREAD helper. In that call we pass to arguments. The threadId and the InformationInput object we have defined with our recently defined *about* field. 
+> In this test we use the *createThreadsAndSubtopics* to create some data. After that we call the informationRegisterForThread field in the mutation object defined in our schema. We do that using the INFORMATION_REGISTER_FOR_THREAD helper. In that call we pass two arguments. The threadId and the InformationInput object we have defined with our recently defined *about* field. 
 > After that we query the thread and use the path *'thread.informations.0.about'* to grab the value of the 'about' field on the first information related to the thread object. We then assert to see if the value was saved. 
 
 ```php
@@ -545,11 +545,13 @@ We will register an information with data in the 'about' field. After that we wi
     }
 ```
 
-Now, let's follow in a TDD way, running the test, making it fail, and answering to it's requests. 
+Now, let's follow in a TDD  way, running the test, making it fail, and answering the requests. 
 
-#### Making It Pass - Improving The Schema And The Resolver
+#### Making It Pass 
 
-Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it there. 
+Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it. 
+
+END JP REVISION 3
 
 > Here we go into the THREAD query helper, that make the call to the thread field in the query namespace, and add the about field as if it was already there. I know that it's not there, but we are moving in a TDD way, so if it's not finding the about on the requested data, I'll add it as if it were there in the "nearest" place.
 > This code is also nice because you can see how the helper is written and how the thread query is written. Please notice that the *processResponse* method will return that function that can be called with paths to query the response data. 
