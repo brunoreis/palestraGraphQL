@@ -84,7 +84,7 @@ query UserPosts{
 
 The above query describes the arguments sent, the required fields and is a lot clearer on what information will be returned from the server
 
-GraphQL usually has only one endpoint and we make all requests there with queries like this. To find out what queries are available, we define a schema on the server. The server defines a schema that list the queries, it's possible arguments and return types. 
+GraphQL usually has only one endpoint and we make all requests there with queries like this. To expose available queries, we define a schema on the server. The schema lists the queries, its possible arguments and the return types. 
 
 The schema from our example above would look something like this: 
 
@@ -133,7 +133,7 @@ It's similar to an Swagger file, right? But, here part of our development procce
 
 Let's imagine now that we need to access this same service from a mobile device to make a simple list of all posts. We just need two fields: title and id. 
 
-How would we do that in REST? Well, we probably would need to pass a parameter to specify this return type and code it inside our controller. In GraphQL, all we need to update is the query to say what fields are needed. 
+How would we do that in REST? Well, we probably would need to pass a parameter to specify this return type and code it inside our controller. In GraphQL, all we need is to update the query to specify what fields are needed. 
 
 > This is a query to posts field in the query namespace. It defines the *userId* argument and the fields it will need: *id* and *title*
 
@@ -148,7 +148,7 @@ query UserPosts{
 
 This will return an array of posts with only those two fields: id and title. So we got to annother improvement over REST here: *In GraphQL the client can specify in the query what fields are needed so only those are returned in the response.*
 
-Let's consider another scenario. We are looking at a list of articles and want to the last 5 comments for each of them. In REST, we could do something like: 
+Diving deep into this scenario. We are looking at a list of articles and want to the last 5 comments for each of them. In REST, we could do something like: 
 
 > requesting the posts of the user 45 using REST
 ```
@@ -244,7 +244,7 @@ The main screen, as shown below, is where we organize messages, in specific thre
 
 ![Create a Thread and Tag it!](./images/createThread.gif)
 
-We are going to cover a very simple example because our goal here is simply to explain the architecture.If you are interest in diving deeperm this App can give you some other data structures to study:
+We are going to cover a very simple example because our goal here is purely to explain the architecture. If you are interested in diving deeper, this App can give you some other data structures to study:
 
 1. A paginated list - Messages
 2. A non paginated list - Threads
