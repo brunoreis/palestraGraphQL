@@ -887,4 +887,4 @@ Exceptions are logged on dev.log.
 
 ### Final Considerations
 
-Thanks for making it this far. I would love to hear how you progress with the development of your own apps or if you ahve any questions about my process. 
+Thanks for making it this far. I would love to hear how you progress with the development of your own apps or if you have any questions about my process. 
