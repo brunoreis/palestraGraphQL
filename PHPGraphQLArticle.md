@@ -551,9 +551,8 @@ Now, let's follow in a TDD  way, running the test, making it fail, and answering
 
 Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it. 
 
-END JP REVISION 3
 
-> Here we go into the THREAD query helper, that make the call to the thread field in the query namespace, and add the about field as if it was already there. I know that it's not there, but we are moving in a TDD way, so if it's not finding the about on the requested data, I'll add it as if it were there in the "nearest" place.
+> Here we go into the THREAD query helper. This makes the call to the thread field in the query namespace and add the 'about' field as if it was already there. I know that it's not there, but we are moving in a TDD way, so if it's not finding the about on the requested data, I'll add it as if it were there in the "nearest" place.
 > This code is also nice because you can see how the helper is written and how the thread query is written. Please notice that the *processResponse* method will return that function that can be called with paths to query the response data. 
 
 ```php 
@@ -644,26 +643,28 @@ We will add the field to our mutation resolver. And also add the field to our OR
     @ORM\Column(name="about", type="text", nullable=true)
 ````
 
-And then, we get the very wanted green message we were waiting for passing the test.
+And now we get the green message we have been waiting for: test successful!
 
-> I encourage you to open SubtopicsTestHelper and follow and understand the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). 
+> I encourage you to open SubtopicsTestHelper and follow the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). 
 > There you will be able to see the GraphQL call happening and the json path component being wrapped in the returning funcion. 
 
-### Refactor - Time To Recap And See What Can Be Improved
+THE LAST FEW PARAGRPAHS WERE OVER MY HEAD, DID NOT CHANGE MUCH
+
+### Refactoring
 
 #### Observe What We Have Done So Far
 
-Having our green lights on, it's time for some retrospective on what we've done so far. Going to a higher to a lower level, lets talk first about the proccess. 
+Now we are in the clear, it's time for a retrospective. Lets start with the proccess. 
 
-One of the benefits I see using GraphQL is to be able to think functionality from an API perspective first. We just touched the db layer at the very end, when we were sure our app would attend the outter world" expectations. 
+One of the benefits I see of using GraphQL is that it enables is to think from an API perspective first. We only touched on the DB at the  end, when we were sure our app would work. 
 
-When we wrote our resolver, we could be confident that we were receiving good data, passed through a typed validation system, and also that the data we returned was being checked with the same criteria. 
+When we wrote our resolver, we were confident that the incoming and outgoign data was being validated.
 
-[This nice article about 'GraphQL first'](https://dev-blog.apollodata.com/graphql-first-a-better-way-to-build-modern-apps-b5a04f7121a0) from DeBergalis is a nice reference talking about this way of developing starting from the contract. 
+[This GraphQL article](https://dev-blog.apollodata.com/graphql-first-a-better-way-to-build-modern-apps-b5a04f7121a0) from DeBergalis is a good reference for this type of development. 
 
-Having used GraphQL now for some months, I can add to the voices saying that this order of development will save you unnecessary work and headaches. Your code will fulfill client's expectations in a more precise way, because you start nearer the business logic.
+Having used GraphQL now for several months, I can add to the voices saying that this style of development will save you unnecessary work and headaches. Your code will fulfill client's expectations in a more precise way, because you start at the business logic level.
 
-So, what have we done? 
+So, what have we done so far? 
 
 1. Understood our functionality
 2. Defined the schema
@@ -671,17 +672,17 @@ So, what have we done?
 4. Wrote the resolver
 5. Updated doctrine
 
-It might seem as too many steps for some people, but to me they are very nice steps because they have very well defined purposes. 
+Each step logically follows the next and could also be written by what they achieve:
 
-1. Know what you are doing ( :-) ) 
+1. Know what you are doing
 2. Define the contract and put validation in place
 3. Define the expected behaviour
 4. Implement the logic
 5. Implement the persistence
 
-Nice!
+Written this way it shows the validaty of following each step in sequence.
 
-I strongly advocate toward this direction of development from business to technical details.  
+END OF REV 4
 
 #### Improve To Use Mutation Results
 
