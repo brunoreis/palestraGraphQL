@@ -551,9 +551,8 @@ Now, let's follow in a TDD  way, running the test, making it fail, and answering
 
 Run this test and it will fail saying that it could not query the 'about' field on the response returned by the THREAD query. So let's add it. 
 
-END JP REVISION 3
 
-> Here we go into the THREAD query helper, that make the call to the thread field in the query namespace, and add the about field as if it was already there. I know that it's not there, but we are moving in a TDD way, so if it's not finding the about on the requested data, I'll add it as if it were there in the "nearest" place.
+> Here we go into the THREAD query helper. This makes the call to the thread field in the query namespace and add the 'about' field as if it was already there. I know that it's not there, but we are moving in a TDD way, so if it's not finding the about on the requested data, I'll add it as if it were there in the "nearest" place.
 > This code is also nice because you can see how the helper is written and how the thread query is written. Please notice that the *processResponse* method will return that function that can be called with paths to query the response data. 
 
 ```php 
@@ -644,26 +643,28 @@ We will add the field to our mutation resolver. And also add the field to our OR
     @ORM\Column(name="about", type="text", nullable=true)
 ````
 
-And then, we get the very wanted green message we were waiting for passing the test.
+And now we get the green message we have been waiting for: test successful!
 
-> I encourage you to open SubtopicsTestHelper and follow and understand the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). 
+> I encourage you to open SubtopicsTestHelper and follow the 'proccessResponse' method (Reis\GraphQLTestRunner\Runner\Runner::processGraphQL). 
 > There you will be able to see the GraphQL call happening and the json path component being wrapped in the returning funcion. 
 
-### Refactor - Time To Recap And See What Can Be Improved
+THE LAST FEW PARAGRPAHS WERE OVER MY HEAD, DID NOT CHANGE MUCH
+
+### Refactoring
 
 #### Observe What We Have Done So Far
 
-Having our green lights on, it's time for some retrospective on what we've done so far. Going to a higher to a lower level, lets talk first about the proccess. 
+Now we are in the clear, it's time for a retrospective. Lets start with the proccess. 
 
-One of the benefits I see using GraphQL is to be able to think functionality from an API perspective first. We just touched the db layer at the very end, when we were sure our app would attend the outter world" expectations. 
+One of the benefits I see of using GraphQL is that it enables is to think from an API perspective first. We only touched on the DB at the  end, when we were sure our app would work. 
 
-When we wrote our resolver, we could be confident that we were receiving good data, passed through a typed validation system, and also that the data we returned was being checked with the same criteria. 
+When we wrote our resolver, we were confident that the incoming and outgoign data was being validated.
 
-[This nice article about 'GraphQL first'](https://dev-blog.apollodata.com/graphql-first-a-better-way-to-build-modern-apps-b5a04f7121a0) from DeBergalis is a nice reference talking about this way of developing starting from the contract. 
+[This GraphQL article](https://dev-blog.apollodata.com/graphql-first-a-better-way-to-build-modern-apps-b5a04f7121a0) from DeBergalis is a good reference for this type of development. 
 
-Having used GraphQL now for some months, I can add to the voices saying that this order of development will save you unnecessary work and headaches. Your code will fulfill client's expectations in a more precise way, because you start nearer the business logic.
+Having used GraphQL now for several months, I can add to the voices saying that this style of development will save you unnecessary work and headaches. Your code will fulfill client's expectations in a more precise way, because you start at the business logic level.
 
-So, what have we done? 
+So, what have we done so far? 
 
 1. Understood our functionality
 2. Defined the schema
@@ -671,25 +672,21 @@ So, what have we done?
 4. Wrote the resolver
 5. Updated doctrine
 
-It might seem as too many steps for some people, but to me they are very nice steps because they have very well defined purposes. 
+Each step logically follows the next and could also be written by what they achieve:
 
-1. Know what you are doing ( :-) ) 
+1. Know what you are doing
 2. Define the contract and put validation in place
 3. Define the expected behaviour
 4. Implement the logic
 5. Implement the persistence
 
-Nice!
+Written this way it shows the validity of following each step in sequence.
 
-I strongly advocate toward this direction of development from business to technical details.  
-
-#### Improve To Use Mutation Results
+#### Other Uses For Mutations 
 
 So far our test runs the *informationRegisterForThread* mutation and then uses the *thread* query to check for the inserted data. But, mutations can also return data. In fact, if we look carefully at them, mutations are identical to other queries. They have a return type and can specify the format of the returned data. 
 
-But, what does that mean to us? If we were making these calls from the client, we would be doing two queries: one for the mutation and another to retrieve the thread again. 
-
-That' why the return type of the mutation is Thread: 
+If we were making these calls from the client, we would be doing two queries: one for the mutation and another to retrieve the thread again. That's why the return type of the mutation is Thread: 
 
 > Take a look at the type (return type) of this mutation
 <img src="./images/informationRegisterForThreadBefore.png" width="400">
@@ -726,18 +723,18 @@ we can do this:
         $this->assertEquals( 'Nice information about that thing.' , $savedAbout );
 ```
 
-That will register the mutation and return the information we need to update the client with only one request. Even our test gets cleaner. 
+That will register the mutation and return the information required to update the client with only one request. Even our test gets cleaner. 
 
-But, let's say we want a little more. We want to know which information was inserted. Since the thread has an information colletion, it could be any of the informations in the array. So, how can we know that? 
+Let's say we want to know which information was inserted. Since the thread has an information collection, it could be any of the informations in the array. So, how can we know which? 
 
-We could return the information instead of returning the thread. But, that could not be our need, since we could have some changes on the thread also. 
-Well, a good news now. We don't need to return only the domain types we have so far. We can create specific types for our mutation returns. 
+We could return the information instead of returning the thread. But, that unnecessary since we could have some changes on the thread. 
+The good news is that we don't need to return only the domain types we have so far. We can create specific types for our mutation returns. 
 
 #### Creating a Specific Type to Our Mutation's Result
 
-Indeed, I was reading this article on [how to design mutations](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) and it enforces that a mutation should allways bake it's own type to return. And, in fact, that makes a lot of sense to me since we create a schema that's more flexible and has a good extension point. Adding a field on a return type, let's say, *InformationRegisterForThreatReturn*, is a lot easier then changing a mutation return type. 
+Indeed, I was reading this article on [how to design mutations](https://dev-blog.apollodata.com/designing-graphql-mutations-e09de826ed97) and it enforces the argument that a mutation should allways make it's own type to return. In fact, that makes a lot of sense to me since we create a schema that's more flexible and has a good extension point. Adding a field on a return type, let's say, *InformationRegisterForThreatReturn*, is a lot easier then changing a mutation return type. 
 
-In our case, that would allow us to return the informationId and the thread. So, let's do it. So far we have: 
+In our case, that would allow us to return the informationId and the thread. Once we do this we have: 
 
 > the schema for *informationRegisterForThread* mutation
 ```yml
@@ -752,7 +749,7 @@ In our case, that would allow us to return the informationId and the thread. So,
                 resolve: "@=service('app.resolver.informations').registerForThread(args)"
 ```
 
-The result type is the "Thread" type. This gives us almost none flexibility to add or remove informations that might be needed there. So let's bake a type for us: 
+The result type is the "Thread" type. This gives us almost no flexibility to add or remove informations that might be needed there. So let's make a type for us: 
 
 > good practice: create a specific mutation return type for every mutation. That will give you flexibility on your schema evolution.
 ```yml
@@ -791,15 +788,13 @@ InformationRegisterForThreadResult:
                 type: "ID"
 ```
 
-And that's it. We've added a very simple functionality on our system, but covered all the required steps and studied the rationale behind them. I hope you followed until here and learned something good so far. 
+We've now added simple functionality to our system and covered every step along the way. 
 
-Now that you already should have a good grasp on the architecture and how to layer that on a php server, the next sections will cover small topics like configuration details or specific tools required to put this all together. It's more like a reference to be consulted, but I felt it would be nice to put it here to give you all the information needet to set up your server. 
-
-Long life to GraphQL!
+The next section should be used like a reference to be used when setting everything up on your server.
 
 #### Big Components Overview
 
-So, now that we dived in the system adding this functionality, we can have a better view of the big components of our architecture: 
+Here are the big components in our architecture: 
 
 **The GraphQL Layer**, implemented using the OverblogGraphQLBundle. 
 * We define the GraphQL schema and expose an endpoint.
@@ -808,10 +803,10 @@ So, now that we dived in the system adding this functionality, we can have a bet
 * Execution will run through resolvers. 
 
 **The Testing Layer**. 
-* Ok, I know tests are not strictly a layer on the architecture. But I want to leave them here to remind you that you can call those GraphQL queries using the tests and implement a safety net on your system. Also tests can serve as a very good documentation.  
+* Ok, I know tests are not strictly a layer on the architecture. I want to leave them here to remind you that you can call those GraphQL queries using the tests and implement a safety net on your system. Tests can also serve as documentation.  
 
 **The Resolvers Layer**, implementing business logic. 
-* Those are simple PHP classes registered as services
+* These are simple PHP classes registered as services
 * We map them using the Expression Language in the schema definition. 
 * Resolvers receive validated args and return data. 
 * They alter data when running mutations. 
@@ -823,9 +818,7 @@ So, now that we dived in the system adding this functionality, we can have a bet
 
 # Other Important Information To Use This Architecture
 
-In the last Section, "The Development Cycle", I explained how this architecture works in a dynamical way. If your only goal with this article was to understand a PHP GraphQL server, maybe you can stop here. But if you want to know more details about this architecture and it's implementation, please read on. 
-
-In this section I'll add some extra details about specific libs and configurations.
+If your only goal was to understand a PHP GraphQL server, maybe you can stop here. But if you want to know more details about the architecture and its implementation, read on as I'll add  extra details about specific libs and configurations.
 
 ### Overblog GraphQL 
 
@@ -841,45 +834,40 @@ One very special feature it has is the [Expression Language](https://github.com/
     resolve: "@=service('app.resolver.informations').registerForThread(args)"
 ```
 
-The bundle also implement endpoints, improve error handling and add some other things over the Webonyx GraphQL lib. One nice lib it requires is the overblog/graphql-php-generator that is responsible by reading a nice and clean yml and convert it into the GraphQL type objects. It will all happen under the hood and all you will need to touch is the yml and the resolvers. 
+The bundle also implements endpoints, improves the error handling and adds some other things over the Webonyx GraphQL lib. One nice lib it requires is the overblog/graphql-php-generator that is responsible for reading a nice and clean yml and converting it into the GraphQL type objects. This bundle adds usability and readability to the GraphQL lib and was, along with the expression language, the reason I decided to migrate from Youshido's lib. 
 
-It adds usability and readability to the GraphQL lib and was, along with the expression language, the reason I decided to migrate from Youshido's lib. 
+### The Schema Declaration 
 
-### The Schema Declaration - Entrance To The Backend
+Our schema declaration is the entrace to the backend. It defines the API interface with the outter word. 
 
-Our schema declaration is under src/AppBundle/Resources/config/graphql/
+It is under src/AppBundle/Resources/config/graphql/
 Queries are defined in the Query.types.yml and mutations on Mutations.types.yml. 
 
-The resolvers are nicely defined there with the expession language we've talked about. You should know that, to fulfill a request, more than one resolver can be called down in the scema tree. 
-
-This file is the entrance on our system. It defines the API interface with the outter word. 
+The resolvers are nicely defined there along with the expession language we've talked about. To fulfill a request, more than one resolver can be called down in the schema tree. 
 
 ### Disabling Cors to Test on Localhost
 
 This app is not on a prod server yet, but to test it on localhost, I usually run the client on one port and the server on another, and I got some cors verification errors, so I installed the [NelmioCorsBundle|https://github.com/nelmio/NelmioCorsBundle] to allow that. 
 
-The configurations today are very open and will need to be a lot more string on a prod server. But, I just wanted you to note that it's running and will help you to avoid a lot of errors seen on the frontend client. 
-
-It's also worth noticing that I had to add 'content-type' as an allowed header in it's config. 
+The configurations are very open and will need to be a lot more stringent on a prod server. I just wanted you to note that it's running and will help you to avoid a lot of errors seen on the frontend client. 
 
 If you don't know this bundle yet, it's worth taking a look at it. It will manage the headers sent and specially the OPTIONS pre-flight requests to enable cross origin resource sharing. In other words, will enable you to call your API from a different domain.
 
-### Error Handling - Raising Messages to The Final User
+### Error Handling 
 
-This is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to a lot of interpretations. 
+This is a very open topic on GraphQL world. The specs don't say a lot ([1](https://facebook.github.io/graphql/#sec-Errors),[2](https://facebook.github.io/graphql/#sec-Executing-Operations)) and are open to interpretation. 
 
-And, as we can see by the community, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
+As a result, there are a lot of different opinions on how to handle them ([1](https://voice.kadira.io/masking-graphql-errors-b1b9f15900c1),[2](https://medium.com/@tarkus/validation-and-user-errors-in-graphql-mutations-39ca79cd00bf))
 
-Being GraphQL so recent, it's expected that you don't have well established best practices on it yet. And this is something nice to take into consideration when designing your system. Maybe you see a better way of doing things. So, please do it, test, and share with us. 
+Because GraphQL is so recent, there are no well established best practices for it yet. Take into consideration when designing your system. Maybe you can more efficient way of doing things. If so test it and share with the community. 
 
-Overblog deals with errors in a manner that is good enough me. First, it will add normal validation errors when it encounter them on the data validation of input or output types. 
-
-Second, it will handle the exceptions thrown in the resolvers. When it catches an exception, it will add an error to the response. Almost all exceptions are added as an "internal server error" generic message. The only two Exception types (and subtypes) that are not translated to this generic message are: 
+Overblog deals with errors in a manner that is good enough for me. First, it will add normal validation errors when it encounters them on the data validation of input or output types. Second, it will handle the exceptions thrown in the resolvers. When it catches an exception, it will add an error to the response. Almost all exceptions are added as an "internal server error" generic message. The only two Exception types (and subtypes) that are not translated to this generic message are: 
 
 - ErrorHandler::DEFAULT_USER_WARNING_CLASS
 - ErrorHandler::DEFAULT_USER_ERROR_CLASS
 
 These can be [configured](https://github.com/overblog/GraphQLBundle/blob/master/DependencyInjection/Configuration.php#L101) on your config.yml with your own exceptions: 
+
 > overiding the exception thrown on errors that can be sent to the user
 ```yml
 overblog_graphql:
@@ -889,18 +877,14 @@ overblog_graphql:
                 errors: "\\AppBundle\\Exceptions\\UserErrorException"
 ```
 
-To understand it a little deeper, please put your diving mask and look at the class that implements this handling: "Overblog\GraphQLBundle\Error\ErrorHandler"
+To understand it at a deeper level, please put your diving mask on and look at the class that implements this handling: "Overblog\GraphQLBundle\Error\ErrorHandler"
 
-The ErrorHandles is also responsible to put the stack trace on the response. But, it will only do it if the symfony debug is turned on. That is normally done on the "$kernel = new AppKernel('dev', true);" call. 
+The ErrorHandles is also responsible for putting the stack trace on the response. It will only do this if the symfony debug is turned on. That is normally done on the "$kernel = new AppKernel('dev', true);" call. 
 
-I encourage you to test sending a non existent id to that query with debug==true and with debug==false and seing the response. You can do that on GraphiQL. 
+I encourage you to test sending a non existent id to that query with debug==true and with debug==false and seing the response. 
 
-Exceptions are also logged on dev.log.  
+Exceptions are logged on dev.log.  
 
 ### Final Considerations
 
-I'm glad you made it. I had so many insights and struggles in the development process that when I decided to to them all together in this article. It got very very messy. I had to cut a lot of paragraphs and content to make it more coherent.
-
-Please let me know your opinions and how I can improve it. All suggestions are very welcome. In the architecture and in the post also. And please let me know if you have any doubts. 
-
-Thanks for reading this far. I hope I contibuted with your discoveries about GraphQL and also with it's addoption by the PHP community. 
+Thanks for making it this far. I would love to hear how you progress with the development of your own apps or if you have any questions about my process. 
